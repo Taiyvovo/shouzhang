@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "shouzhang"
+version = "0.1.0"
+description = "手账排版工具 — 后端排版引擎与渲染管线"
+requires-python = ">=3.11"
+dependencies = [
+    "pydantic>=2.6",
+    "svgwrite>=1.4",
+]
+
+[project.optional-dependencies]
+png = ["cairosvg>=1.7"]
+dev = ["pytest>=8.0"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>手账编辑器</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<header id="topbar">
+  <div class="tbar-left">
+    <span class="logo">手账</span>
+    <span class="sep">|</span>
+    <button class="tbtn active" data-tool="select" title="选择 V">↖</button>
+    <button class="tbtn" data-tool="text" title="文字 T">T</button>
+    <button class="tbtn" data-tool="sticker" title="贴纸 S">✦</button>
+  </div>
+  <div class="tbar-center">
+    <div class="zoom-ctrl">
+      <button id="zoomOut" title="缩小">−</button>
+      <span id="zoomLabel">50%</span>
+      <input type="range" id="zoomSlider" min="10" max="200" value="50">
+      <button id="zoomIn" title="放大">+</button>
+      <button id="zoomFit" title="适应窗口">⊡</button>
+    </div>
+  </div>
+  <div class="tbar-right">
+    <select id="selCanvas">
+      <option value="1080_1527">竖版 1080×1527</option>
+      <option value="1527_1080">横版 1527×1080</option>
+    </select>
+    <select id="selBg"></select>
+    <button class="tbtn" id="btnExportSVG" title="导出SVG">SVG</button>
+    <button class="tbtn accent" id="btnExport">导出 PNG</button>
+  </div>
+</header>
+
+<div id="main">
+  <div id="canvasWrap">
+    <div id="canvasView">
+      <svg id="svgCanvas" xmlns="http://www.w3.org/2000/svg">
+        <defs id="svgDefs">
+          <style id="fontStyles"></style>
+        </defs>
+        <rect id="bgRect" width="1080" height="1527" fill="#fbfaf6"/>
+        <g id="bgPattern"></g>
+        <g id="elementsGroup"></g>
+      </svg>
+      <!-- 文字编辑浮层 -->
+      <div id="textEditor" style="display:none" contenteditable="true"></div>
+    </div>
+  </div>
+
+  <aside id="propsPanel">
+    <div class="props-empty">选中元素后<br>在此编辑属性</div>
+    <div class="props-form" style="display:none">
+      <div class="prop-group">
+        <label>文字内容</label>
+        <textarea id="propText" rows="2" placeholder="输入文字..."></textarea>
+      </div>
+      <div class="prop-group">
+        <label>字体</label>
+        <select id="propFamily"></select>
+      </div>
+      <div class="prop-row">
+        <div class="prop-group" style="flex:1">
+          <label>字号 <span id="propSizeVal">36</span></label>
+          <input type="range" id="propSize" min="8" max="120" value="36">
+        </div>
+        <div class="prop-group" style="flex:1">
+          <label>字重</label>
+          <select id="propWeight">
+            <option value="100">Thin</option><option value="300">Light</option>
+            <option value="400" selected>Regular</option><option value="500">Medium</option>
+            <option value="700">Bold</option><option value="900">Black</option>
+          </select>
+        </div>
+      </div>
+      <div class="prop-row">
+        <div class="prop-group" style="flex:1">
+          <label>颜色</label>
+          <input type="color" id="propColor" value="#333333">
+        </div>
+        <div class="prop-group" style="flex:1">
+          <label>对齐</label>
+          <select id="propAlign">
+            <option value="left">左</option><option value="center">中</option><option value="right">右</option>
+          </select>
+        </div>
+      </div>
+      <div class="prop-group"><label>旋转 <span id="propRotVal">0°</span></label><input type="range" id="propRot" min="-180" max="180" value="0"></div>
+      <div class="prop-group"><label>透明度</label><input type="range" id="propOpacity" min="0.1" max="1" step="0.05" value="1"></div>
+      <div class="prop-row">
+        <div class="prop-group" style="flex:1"><label>W</label><input type="number" id="propW" min="10" step="1"></div>
+        <div class="prop-group" style="flex:1"><label>H</label><input type="number" id="propH" min="10" step="1"></div>
+      </div>
+      <button class="btn-del" id="btnDelete">删除元素</button>
+    </div>
+  </aside>
+</div>
+
+<div id="stickerTray" style="display:none">
+  <div class="tray-tabs" id="trayTabs"></div>
+  <div class="tray-grid" id="trayGrid"></div>
+</div>
+
+<script src="/static/app.js"></script>
+</body>
+</html>

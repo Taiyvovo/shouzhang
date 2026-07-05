@@ -1,0 +1,20 @@
+{
+  "id": "hand-classic",
+  "name": "经典手帐",
+  "category": "hand",
+  "canvas": { "width": 1080, "height": 1527, "background": "#fdfaf3", "pattern": "lines", "pattern_color": "rgba(180,160,120,0.25)", "pattern_spacing": 34 },
+  "slots": [
+    { "id": "date", "type": "text", "x": 80, "y": 80, "w": 560, "h": 65, "default": "2026.07.05  星期日  晴",
+      "style": { "font": { "family": "serif", "size": 32, "color": "#8a7a5a", "letter_spacing": 3 } } },
+    { "id": "title", "type": "text", "x": 80, "y": 155, "w": 920, "h": 120, "default": "今日手帐",
+      "style": { "font": { "family": "serif", "size": 72, "weight": 700, "color": "#3a3226" } } },
+    { "id": "photo", "type": "image", "x": 80, "y": 320, "w": 560, "h": 560 },
+    { "id": "body", "type": "text", "x": 680, "y": 320, "w": 360, "h": 820, "default": "下午去了那家常去的咖啡店，靠窗的位置刚好空着。点了杯热拿铁，翻开带了很久的书，窗外的树影在纸上摇来晃去。\n\n偶尔抬头看街角，骑自行车的女孩车篮里插着一把向日葵，黄得耀眼。\n\n这个下午，时间很慢。",
+      "style": { "font": { "family": "serif", "size": 34, "color": "#4a4035", "line_height": 2.0 } } }
+  ],
+  "decorations": [
+    { "type": "tape", "id": "tape1", "x": 60, "y": 295, "w": 260, "h": 55, "rotation": -6, "src": "tapes/washi-1.svg" },
+    { "type": "sticker", "id": "flower1", "x": 600, "y": 830, "w": 120, "h": 120, "rotation": 14, "src": "stickers/flower.svg" },
+    { "type": "sticker", "id": "flower2", "x": 130, "y": 1360, "w": 100, "h": 100, "rotation": -10, "src": "stickers/flower.svg" }
+  ]
+}

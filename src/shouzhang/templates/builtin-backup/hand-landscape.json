@@ -1,0 +1,20 @@
+{
+  "id": "hand-landscape",
+  "name": "手帐横版",
+  "category": "hand",
+  "canvas": { "width": 1527, "height": 1080, "background": "#fdfaf3", "pattern": "lines", "pattern_color": "rgba(180,160,120,0.25)", "pattern_spacing": 34 },
+  "slots": [
+    { "id": "date", "type": "text", "x": 90, "y": 80, "w": 560, "h": 55, "default": "2026.07.05  星期日  晴",
+      "style": { "font": { "family": "serif", "size": 30, "color": "#8a7a5a", "letter_spacing": 3 } } },
+    { "id": "title", "type": "text", "x": 90, "y": 145, "w": 800, "h": 110, "default": "今日手帐",
+      "style": { "font": { "family": "serif", "size": 68, "weight": 700, "color": "#3a3226" } } },
+    { "id": "photo", "type": "image", "x": 100, "y": 310, "w": 540, "h": 540 },
+    { "id": "body", "type": "text", "x": 680, "y": 310, "w": 780, "h": 600, "default": "今天真的太好看了。天蓝得发亮，空气里有栀子花的香味。\n\n和朋友去了郊区的农场，摘了一篮子草莓，红得不像话，边摘边吃，嘴角都是甜的。\n\n回来的路上经过一片麦田，风一吹过，麦浪一层层地推过去，像地面的海。忍不住跳下车拍了好多照片。\n\n那些照片洗出来一定会很好看。",
+      "style": { "font": { "family": "serif", "size": 34, "color": "#4a4035", "line_height": 2.0 } } }
+  ],
+  "decorations": [
+    { "type": "tape", "id": "tape1", "x": 80, "y": 285, "w": 280, "h": 55, "rotation": -6, "src": "tapes/washi-1.svg" },
+    { "type": "sticker", "id": "flower1", "x": 580, "y": 810, "w": 110, "h": 110, "rotation": 12, "src": "stickers/flower.svg" },
+    { "type": "sticker", "id": "flower2", "x": 1380, "y": 120, "w": 90, "h": 90, "rotation": -8, "src": "stickers/flower.svg" }
+  ]
+}

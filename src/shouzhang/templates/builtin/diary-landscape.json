@@ -1,0 +1,20 @@
+{
+  "id": "diary-landscape",
+  "name": "日记横版",
+  "category": "diary",
+  "canvas": { "width": 1527, "height": 1080, "background": "#fbfaf6", "pattern": "lines", "pattern_color": "rgba(160,150,130,0.20)", "pattern_spacing": 34 },
+  "slots": [
+    { "id": "date", "type": "text", "x": 90, "y": 114, "w": 560, "h": 50, "default": "2026年7月5日  星期日",
+      "style": { "font": { "family": "serif", "size": 28, "color": "#a89888", "letter_spacing": 3 } } },
+    { "id": "title", "type": "text", "x": 90, "y": 153, "w": 800, "h": 100, "default": "日记",
+      "style": { "font": { "family": "serif", "size": 64, "weight": 600, "color": "#3a3026" } } },
+    { "id": "body", "type": "text", "x": 90, "y": 279, "w": 1350, "h": 720, "default": "阳光从窗帘缝隙溜进来，在桌面画下一道细长的金色。今天的天气好得让人不想待在屋里。\n\n索性搬了椅子去阳台，泡了杯茶，翻了一本旧书。风吹过来的时候带着楼下桂花树的香气，淡淡的，像记忆里某个遥远下午的味道。\n\n有时候想，好日子不一定是发生了多么了不起的事，而是每一个平凡的瞬间都能被认真地对待。就像现在这样，晒着太阳，喝着茶，看几页书，心里很安静。",
+      "style": { "font": { "family": "serif", "size": 34, "color": "#4a4030", "line_height": 2.0 } } }
+  ],
+  "decorations": [
+    { "type": "sticker", "id": "star", "x": 1380, "y": 80, "w": 80, "h": 80, "rotation": 10, "src": "stickers/star.svg" },
+    { "type": "sticker", "id": "sunny", "x": 1330, "y": 860, "w": 110, "h": 110, "rotation": -5, "src": "stickers/weather/sunny.svg" },
+    { "type": "sticker", "id": "coffee", "x": 30, "y": 880, "w": 95, "h": 110, "rotation": 8, "src": "stickers/item/coffee.svg" },
+    { "type": "sticker", "id": "leaf", "x": 90, "y": 940, "w": 90, "h": 90, "rotation": -12, "src": "stickers/leaf.svg" }
+  ]
+}

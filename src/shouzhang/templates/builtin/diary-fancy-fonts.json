@@ -1,0 +1,84 @@
+{
+  "id": "diary-fancy-fonts",
+  "name": "花哨字体大赏",
+  "category": "diary",
+  "canvas": { "width": 1080, "height": 1527, "background": "#1a1a2e" },
+  "slots": [
+    {
+      "id": "t0", "type": "text", "x": 60, "y": 40, "w": 960, "h": 50,
+      "default": "FANCY FONTS SHOWCASE",
+      "style": { "font": { "family": "Bebas Neue", "size": 48, "color": "#e94560", "weight": 400, "letter_spacing": 6 } }
+    },
+    {
+      "id": "h1", "type": "text", "x": 60, "y": 110, "w": 960, "h": 36,
+      "default": "┈ Cherry Bomb One — 圆滚滚的英文字体",
+      "style": { "font": { "family": "sans-serif", "size": 18, "color": "#888" } }
+    },
+    {
+      "id": "t1", "type": "text", "x": 60, "y": 140, "w": 960, "h": 120,
+      "default": "Juicy Bouncy & Sweet!\nThe quick brown fox jumps over the lazy dog.",
+      "style": { "font": { "family": "Cherry Bomb One", "size": 42, "color": "#f7d774", "line_height": 1.3 } }
+    },
+    {
+      "id": "h2", "type": "text", "x": 60, "y": 290, "w": 960, "h": 36,
+      "default": "┈ Fascinate Inline — 镂空复古风",
+      "style": { "font": { "family": "sans-serif", "size": 18, "color": "#888" } }
+    },
+    {
+      "id": "t2", "type": "text", "x": 60, "y": 320, "w": 960, "h": 80,
+      "default": "VINTAGE NEON LIGHTS\nFASCINATE INLINE",
+      "style": { "font": { "family": "Fascinate Inline", "size": 52, "color": "#0f3460", "line_height": 1.2 } }
+    },
+    {
+      "id": "h3", "type": "text", "x": 60, "y": 440, "w": 960, "h": 36,
+      "default": "┈ Fusion Pixel 10px — 中文像素字体",
+      "style": { "font": { "family": "sans-serif", "size": 18, "color": "#888" } }
+    },
+    {
+      "id": "t3", "type": "text", "x": 60, "y": 470, "w": 960, "h": 130,
+      "default": "像素字体的复古魅力\nABCDEFG 0123456789\n今天天气很好阳光从窗纱里透进来\n像素风格的文字像回到了 Game Boy 时代",
+      "style": { "font": { "family": "Fusion Pixel 10 px Monospaced ZH Hans", "size": 20, "color": "#4ecca3", "line_height": 1.6 } }
+    },
+    {
+      "id": "h4", "type": "text", "x": 60, "y": 640, "w": 960, "h": 36,
+      "default": "┈ 娃娃体 — 可爱手写中文",
+      "style": { "font": { "family": "sans-serif", "size": 18, "color": "#888" } }
+    },
+    {
+      "id": "t4", "type": "text", "x": 60, "y": 670, "w": 960, "h": 140,
+      "default": "娃娃体中文手写测试\n今天天气很好阳光从窗纱里透进来\n早上吃了面包和牛奶下午去公园散步\n像小朋友写的字圆圆的",
+      "style": { "font": { "family": "华康娃娃体-非商", "size": 36, "color": "#f5a9b8", "line_height": 1.7 } }
+    },
+    {
+      "id": "h5", "type": "text", "x": 60, "y": 850, "w": 960, "h": 36,
+      "default": "┈ Lora — 优雅衬线体",
+      "style": { "font": { "family": "sans-serif", "size": 18, "color": "#888" } }
+    },
+    {
+      "id": "t5", "type": "text", "x": 60, "y": 880, "w": 960, "h": 130,
+      "default": "Elegant Serif for Reading\n*The quick brown fox jumps over the lazy dog.*\nTypography is the art and technique of arranging type\nto make written language legible, readable, and appealing.",
+      "style": { "font": { "family": "Lora", "size": 30, "color": "#e2c275", "line_height": 1.6 } }
+    },
+    {
+      "id": "h6", "type": "text", "x": 60, "y": 1050, "w": 960, "h": 36,
+      "default": "┈ Roboto Slab — 粗厚衬线",
+      "style": { "font": { "family": "sans-serif", "size": 18, "color": "#888" } }
+    },
+    {
+      "id": "t6", "type": "text", "x": 60, "y": 1080, "w": 960, "h": 100,
+      "default": "BOLD SLAB SERIF\nThe quick brown fox jumps over the lazy dog.\n1234567890 !@#$%&*",
+      "style": { "font": { "family": "Roboto Slab", "size": 30, "color": "#eeeeee", "line_height": 1.6 } }
+    },
+    {
+      "id": "h7", "type": "text", "x": 60, "y": 1230, "w": 960, "h": 36,
+      "default": "┈ Yuyu — ゆゆ日语手写体",
+      "style": { "font": { "family": "sans-serif", "size": 18, "color": "#888" } }
+    },
+    {
+      "id": "t7", "type": "text", "x": 60, "y": 1260, "w": 960, "h": 130,
+      "default": "ゆるふわ日本語フォント\nこんにちは今日はいい天気ですね\n手書き風のやわらかい文字です\n日記や手帳にぴったり",
+      "style": { "font": { "family": "Yuyu", "size": 32, "color": "#ffb6c1", "line_height": 1.6 } }
+    }
+  ],
+  "decorations": []
+}

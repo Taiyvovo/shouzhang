@@ -1,0 +1,20 @@
+{
+  "id": "diary-rich",
+  "name": "富文本日记",
+  "category": "diary",
+  "canvas": { "width": 1080, "height": 1527, "background": "#fbfaf6", "pattern": "lines", "pattern_color": "rgba(160,150,130,0.20)", "pattern_spacing": 36 },
+  "slots": [
+    { "id": "date", "type": "text", "x": 80, "y": 120, "w": 560, "h": 55, "default": "2026年7月5日  星期日",
+      "style": { "font": { "family": "serif", "size": 30, "color": "#a89888", "letter_spacing": 3 } } },
+    { "id": "title", "type": "text", "x": 80, "y": 194, "w": 920, "h": 100, "default": "日记",
+      "style": { "font": { "family": "serif", "size": 72, "weight": 600, "color": "#3a3026" } } },
+    { "id": "body", "type": "text", "x": 80, "y": 331, "w": 920, "h": 1150, "default": "今天 [c=#e85848]**天气很好**[/c]，阳光从窗纱里透进来。\n\n上午整理了*书架*，翻到一本 __高中笔记本__，那种*认真又笨拙*的感觉，[s=48]**特别喜欢**[/s]。\n\n下午 [c=#68a868]*去了菜市场*[/c]，挑了几个熟透的*番茄*和一把 ~~新鲜罗勒~~，晚上做意面。\n\n[s=28]没什么特别的事发生，但就是觉得，[c=#8888cc]**这样的一天，应该记下来**[/c]。[/s]",
+      "style": { "font": { "family": "serif", "size": 36, "color": "#4a4030", "line_height": 2.0 } } }
+  ],
+  "decorations": [
+    { "type": "sticker", "id": "leaf", "x": 870, "y": 50, "w": 100, "h": 100, "rotation": 15, "src": "stickers/leaf.svg" },
+    { "type": "sticker", "id": "happy", "x": 900, "y": 260, "w": 90, "h": 90, "rotation": 5, "src": "stickers/emotion/happy.svg" },
+    { "type": "sticker", "id": "camera", "x": 100, "y": 1350, "w": 120, "h": 100, "rotation": -10, "src": "stickers/item/camera.svg" },
+    { "type": "sticker", "id": "cloud", "x": 760, "y": 1390, "w": 150, "h": 105, "rotation": -5, "src": "stickers/cloud.svg" }
+  ]
+}

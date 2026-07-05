@@ -1,0 +1,20 @@
+{
+  "id": "hand-fresh",
+  "name": "清新薄荷",
+  "category": "hand",
+  "canvas": { "width": 1080, "height": 1527, "background": "#eef6f0", "pattern": "none" },
+  "slots": [
+    { "id": "date", "type": "text", "x": 80, "y": 85, "w": 560, "h": 60, "default": "2026.07.05  星期日",
+      "style": { "font": { "family": "sans-serif", "size": 32, "color": "#5a8a6a", "letter_spacing": 3 } } },
+    { "id": "title", "type": "text", "x": 80, "y": 160, "w": 920, "h": 120, "default": "晴朗的一天",
+      "style": { "font": { "family": "sans-serif", "size": 72, "weight": 700, "color": "#2a4a3a" } } },
+    { "id": "body", "type": "text", "x": 80, "y": 330, "w": 920, "h": 1050, "default": "清晨推窗，满眼都是绿。风带着草香扑进来，像被夏天轻轻抱了一下。\n\n骑车去花市，买了一把尤加利叶，插在玻璃瓶里，整个房间都清爽起来。回家的路上拐进面包店，刚出炉的可颂香得让人走不动路。\n\n这样的日子，值得一句真好。",
+      "style": { "font": { "family": "sans-serif", "size": 36, "color": "#3a5a4a", "line_height": 2.0 } } }
+  ],
+  "decorations": [
+    { "type": "background", "id": "bg", "x": 0, "y": 0, "w": 1080, "h": 1527, "src": "backgrounds/mint.svg" },
+    { "type": "sticker", "id": "cloud", "x": 740, "y": 100, "w": 200, "h": 140, "src": "stickers/cloud.svg" },
+    { "type": "sticker", "id": "leaf", "x": 850, "y": 1300, "w": 140, "h": 140, "rotation": -20, "src": "stickers/leaf.svg" },
+    { "type": "sticker", "id": "leaf2", "x": 100, "y": 1350, "w": 110, "h": 110, "rotation": 25, "src": "stickers/leaf.svg" }
+  ]
+}

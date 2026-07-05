@@ -1,0 +1,64 @@
+{
+  "id": "diary-lang-fonts",
+  "name": "多语言字体测试",
+  "category": "diary",
+  "canvas": { "width": 1080, "height": 1527, "background": "#fefefe" },
+  "slots": [
+    {
+      "id": "title", "type": "text", "x": 60, "y": 40, "w": 960, "h": 60,
+      "default": "多语言文字字体测试",
+      "style": { "font": { "family": "Noto Sans SC", "size": 44, "weight": 700, "color": "#222" } }
+    },
+    { "id": "sep", "type": "text", "x": 60, "y": 105, "w": 960, "h": 30,
+      "default": "────────────────────────────────────", "style": { "font": { "family": "sans-serif", "size": 16, "color": "#ccc" } } },
+
+    { "id": "en_h", "type": "text", "x": 60, "y": 140, "w": 960, "h": 30,
+      "default": "▼ Google Sans — 现代英文无衬线", "style": { "font": { "family": "sans-serif", "size": 16, "color": "#999" } } },
+    { "id": "en_t", "type": "text", "x": 60, "y": 170, "w": 960, "h": 130,
+      "default": "Google Sans is a geometric sans-serif typeface.\nThe quick brown fox jumps over the lazy dog.\n**Bold text** and *italic style* mixed inline.\n0123456789 !@#$%^&*() — Beautiful & Modern",
+      "style": { "font": { "family": "Google Sans", "size": 28, "color": "#333", "line_height": 1.7 } } },
+
+    { "id": "sc_h", "type": "text", "x": 60, "y": 340, "w": 960, "h": 30,
+      "default": "▼ Noto Sans SC — 简体中文", "style": { "font": { "family": "sans-serif", "size": 16, "color": "#999" } } },
+    { "id": "sc_t", "type": "text", "x": 60, "y": 370, "w": 960, "h": 130,
+      "default": "思源黑体是 Google 与 Adobe 合作开发的开源中文字体。\n**粗体** *斜体* __下划线__ ~~傍点~~ 混合排版测试。\n今天天气很好阳光从窗纱里透进来。\nHello你好ABC123 —— 中英混排效果。",
+      "style": { "font": { "family": "Noto Sans SC", "size": 28, "color": "#222", "line_height": 1.7 } } },
+
+    { "id": "tc_h", "type": "text", "x": 60, "y": 540, "w": 960, "h": 30,
+      "default": "▼ Noto Serif SC — 简体中文衬线", "style": { "font": { "family": "sans-serif", "size": 16, "color": "#999" } } },
+    { "id": "tc_t", "type": "text", "x": 60, "y": 570, "w": 960, "h": 130,
+      "default": "思源宋体有典雅的衬线装饰，适合长文阅读。\n今天天气很好阳光从窗纱里透进来在地板上画了一排格子。\n上午整理了书架下午去了菜市场晚上做意面。\nABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefg 12345",
+      "style": { "font": { "family": "Noto Serif SC", "size": 26, "color": "#444", "line_height": 1.8 } } },
+
+    { "id": "jp_h", "type": "text", "x": 60, "y": 740, "w": 960, "h": 30,
+      "default": "▼ Noto Sans JP — 日本語", "style": { "font": { "family": "sans-serif", "size": 16, "color": "#999" } } },
+    { "id": "jp_t", "type": "text", "x": 60, "y": 770, "w": 960, "h": 130,
+      "default": "Noto Sans JP は日本語表示に最適化されたフォントです。\n今日はとてもいい天気ですね。窓から陽射しが差し込んでいます。\n**太字** と *斜体* のテスト。ひらがな・カタカナ・漢字。\nHello こんにちは ABC 12345 —— 日英混植",
+      "style": { "font": { "family": "Noto Sans JP", "size": 28, "color": "#222", "line_height": 1.7 } } },
+
+    { "id": "kr_h", "type": "text", "x": 60, "y": 940, "w": 960, "h": 30,
+      "default": "▼ Fusion Pixel 10px KO — 한국어 픽셀 폰트", "style": { "font": { "family": "sans-serif", "size": 16, "color": "#999" } } },
+    { "id": "kr_t", "type": "text", "x": 60, "y": 970, "w": 960, "h": 100,
+      "default": "안녕하세요 오늘은 날씨가 참 좋네요\n픽셀 폰트로 쓰는 한국어 텍스트입니다\nABCDEFG 가나다라마바사 0123456789",
+      "style": { "font": { "family": "Fusion Pixel 10 px Monospaced KO", "size": 20, "color": "#555", "line_height": 1.6 } } },
+
+    { "id": "jp2_h", "type": "text", "x": 60, "y": 1100, "w": 960, "h": 30,
+      "default": "▼ Yuyu — ゆるふわ日本語手書き", "style": { "font": { "family": "sans-serif", "size": 16, "color": "#999" } } },
+    { "id": "jp2_t", "type": "text", "x": 60, "y": 1130, "w": 960, "h": 100,
+      "default": "ゆるふわ日本語フォントで書く日記\n今日はいい天気。窓を開けたら気持ちいい風が。\n手書き風の柔らかい文字が日記にぴったりです。",
+      "style": { "font": { "family": "Yuyu", "size": 26, "color": "#555", "line_height": 1.7 } } },
+
+    { "id": "cn_h", "type": "text", "x": 60, "y": 1270, "w": 960, "h": 30,
+      "default": "▼ 娃娃体 — 可爱手写中文", "style": { "font": { "family": "sans-serif", "size": 16, "color": "#999" } } },
+    { "id": "cn_t", "type": "text", "x": 60, "y": 1300, "w": 960, "h": 130,
+      "default": "娃娃体写日记的感觉像回到了小时候\n今天天气很好阳光从窗纱里透进来\n圆圆的字体看起来很温暖\n1234567890 ！@#¥%……&*",
+      "style": { "font": { "family": "华康娃娃体-非商", "size": 30, "color": "#666", "line_height": 1.7 } } },
+
+    { "id": "jp3_h", "type": "text", "x": 60, "y": 1440, "w": 960, "h": 30,
+      "default": "▼ WDXLLubrifont JPN — 日文装饰体", "style": { "font": { "family": "sans-serif", "size": 16, "color": "#999" } } },
+    { "id": "jp3_t", "type": "text", "x": 60, "y": 1470, "w": 960, "h": 55,
+      "default": "WDX LLubrifont JPN デザインフォント",
+      "style": { "font": { "family": "WDXLLubrifont JPN", "size": 34, "color": "#888", "line_height": 1.5 } } }
+  ],
+  "decorations": []
+}

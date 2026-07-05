@@ -1,0 +1,20 @@
+{
+  "id": "hand-vintage",
+  "name": "复古牛皮",
+  "category": "hand",
+  "canvas": { "width": 1080, "height": 1527, "background": "#d9c4a3", "pattern": "none" },
+  "slots": [
+    { "id": "date", "type": "text", "x": 80, "y": 85, "w": 560, "h": 60, "default": "2026.07.05  星期日",
+      "style": { "font": { "family": "serif", "size": 32, "color": "#6a4a2a", "letter_spacing": 3 } } },
+    { "id": "title", "type": "text", "x": 80, "y": 160, "w": 920, "h": 120, "default": "旧时光",
+      "style": { "font": { "family": "serif", "size": 72, "weight": 700, "color": "#3a2410" } } },
+    { "id": "body", "type": "text", "x": 80, "y": 330, "w": 920, "h": 1050, "default": "翻开旧相册，那些泛黄的照片里藏着夏天的味道。奶奶家的老风扇吱呀作响，院子里的栀子花开得正好，一朵一朵白得像刚落的雪。\n\n时间走得很慢很慢，慢到能听见蝉鸣里的每一秒。\n\n有些记忆不会褪色，只是慢慢变成了琥珀色的光，在某个下午忽然照进来，暖暖的。",
+      "style": { "font": { "family": "serif", "size": 36, "color": "#4a3418", "line_height": 2.0 } } }
+  ],
+  "decorations": [
+    { "type": "background", "id": "bg", "x": 0, "y": 0, "w": 1080, "h": 1527, "src": "backgrounds/kraft.svg" },
+    { "type": "sticker", "id": "moon", "x": 850, "y": 110, "w": 150, "h": 150, "rotation": 10, "src": "stickers/moon.svg" },
+    { "type": "sticker", "id": "star", "x": 100, "y": 1330, "w": 110, "h": 110, "rotation": -15, "src": "stickers/star.svg" },
+    { "type": "sticker", "id": "star2", "x": 850, "y": 1360, "w": 75, "h": 75, "rotation": 22, "src": "stickers/star.svg" }
+  ]
+}

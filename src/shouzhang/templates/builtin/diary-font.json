@@ -1,0 +1,30 @@
+{
+  "id": "diary-font",
+  "name": "字体测试",
+  "category": "diary",
+  "canvas": { "width": 1080, "height": 1527, "background": "#fbfaf6", "pattern": "lines", "pattern_color": "rgba(160,150,130,0.20)", "pattern_spacing": 36 },
+  "slots": [
+    {
+      "id": "title", "type": "text", "x": 80, "y": 120, "w": 920, "h": 80,
+      "default": "自定义字体渲染测试",
+      "style": { "font": { "family": "Noto Sans SC", "size": 48, "weight": 700, "color": "#3a3026" } }
+    },
+    {
+      "id": "line1", "type": "text", "x": 80, "y": 220, "w": 880, "h": 40,
+      "default": "上方：Noto Sans SC | 下方：系统 serif 对比",
+      "style": { "font": { "family": "sans-serif", "size": 20, "color": "#999" } }
+    },
+    {
+      "id": "body_custom", "type": "text", "x": 80, "y": 280, "w": 920, "h": 550,
+      "default": "2025年7月5日  晴\n\n今天是一个特别的日子。很久没有这样静下心来写字了，\n熟悉的感觉慢慢回来了。\n\nNoto Sans SC 是一款优秀的开源中文字体，\n支持简体中文、繁体中文、日文和韩文。\n\nABCDEFGHIJKLMNOPQRSTUVWXYZ\nabcdefghijklmnopqrstuvwxyz\n0123456789！@#¥%……&*（）",
+      "style": { "font": { "family": "Noto Sans SC", "size": 36, "color": "#4a4030", "line_height": 2.0 } }
+    },
+    {
+      "id": "body_system", "type": "text", "x": 80, "y": 860, "w": 920, "h": 550,
+      "default": "对比段落 —— 系统 serif 字体渲染。\n\n这是一段相同的文字用系统衬线字体显示。\n可以观察字间距、笔画粗细、\n以及整体排版气质上的差异。\n\nABCDEFGHIJKLMNOPQRSTUVWXYZ\nabcdefghijklmnopqrstuvwxyz\n0123456789！@#¥%……&*（）",
+      "style": { "font": { "family": "serif", "size": 36, "color": "#4a4030", "line_height": 2.0 } }
+    }
+  ],
+  "decorations": [
+  ]
+}
