@@ -4,8 +4,8 @@
 
 ## 截图
 
-![shouzhang]()
-![shouzhang]()
+![shouzhang](https://github.com/Taiyvovo/shouzhang/blob/main/img1.png?raw=true)
+![shouzhang](https://github.com/Taiyvovo/shouzhang/blob/main/img2.png?raw=true)
 
 ## 特性
 
