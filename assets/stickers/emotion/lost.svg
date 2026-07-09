@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <!-- 低落 - 脸部偏蓝 -->
+  <circle cx="100" cy="100" r="80" fill="#d0dce8"/>
+  <path d="M 70 94 Q 75 88 81 92" fill="none" stroke="#333" stroke-width="3" stroke-linecap="round"/>
+  <path d="M 119 92 Q 125 88 130 94" fill="none" stroke="#333" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="65" cy="112" r="10" fill="#f5c5b9" opacity="0.5"/>
+  <circle cx="135" cy="112" r="10" fill="#f5c5b9" opacity="0.5"/>
+  <path d="M 87 124 Q 100 115 113 124" fill="none" stroke="#333" stroke-width="3" stroke-linecap="round"/>
+</svg>

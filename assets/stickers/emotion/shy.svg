@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <!-- 害羞 -->
+  <circle cx="100" cy="100" r="80" fill="#f5d0c4"/>
+  <path d="M 70 90 Q 75 86 80 90" fill="none" stroke="#333" stroke-width="3" stroke-linecap="round"/>
+  <path d="M 120 90 Q 125 86 130 90" fill="none" stroke="#333" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="65" cy="112" r="13" fill="#f5c5b9" opacity="0.9"/>
+  <circle cx="135" cy="112" r="13" fill="#f5c5b9" opacity="0.9"/>
+  <path d="M 90 120 Q 100 124 110 120" fill="none" stroke="#333" stroke-width="3" stroke-linecap="round"/>
+</svg>

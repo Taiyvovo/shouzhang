@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <!-- ovo 但嘴是 >w< 风格 -->
+  <circle cx="100" cy="100" r="80" fill="#f4dfc8"/>
+  <!-- 眼睛 -->
+  <circle cx="72" cy="90" r="10" fill="#333"/>
+  <circle cx="128" cy="90" r="10" fill="#333"/>
+  <!-- 眼睛高光 -->
+  <circle cx="69" cy="86" r="3" fill="#ffffff" opacity="0.7"/>
+  <circle cx="125" cy="86" r="3" fill="#ffffff" opacity="0.7"/>
+  <circle cx="75" cy="94" r="2" fill="#ffffff" opacity="0.35"/>
+  <circle cx="131" cy="94" r="2" fill="#ffffff" opacity="0.35"/>
+  <!-- 腮红 -->
+  <circle cx="65" cy="112" r="12" fill="#f5c5b9" opacity="0.7"/>
+  <circle cx="135" cy="112" r="12" fill="#f5c5b9" opacity="0.7"/>
+  <!-- >w< 嘴（w 形） -->
+  <path d="M 80 115 Q 90 128, 100 115 Q 110 128, 120 115" fill="none" stroke="#333" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
