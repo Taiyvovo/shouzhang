@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, watch, onMounted, nextTick } from "vue";
+import { ref, computed, watch, onMounted, onUnmounted, nextTick } from "vue";
 import { useEditor } from "../stores/editor.js";
 import CanvasElement from "./CanvasElement.vue";
 
@@ -7,6 +7,7 @@ const store = useEditor();
 
 const container = ref(null);
 const defsRef = ref(null);
+const svgWrapper = ref(null);
 const canvasScale = ref(0.5);
 const clickOrigin = ref({ x: 0, y: 0 });
 
@@ -135,20 +136,31 @@ function onCanvasClick(e) {
 }
 
 function onWheel(e) {
-  if (e.ctrlKey) return; // Ctrl+scroll = browser default (page pan)
+  if (e.ctrlKey) return;
   e.preventDefault();
+  e.stopPropagation();
   const delta = e.deltaY > 0 ? -0.05 : 0.05;
-  canvasScale.value = Math.max(0.2, Math.min(1.5, canvasScale.value + delta));
+  canvasScale.value = Math.max(0.2, Math.min(2.0, canvasScale.value + delta));
 }
+
+// Use native listener to ensure passive:false (so preventDefault works)
+onMounted(() => {
+  const el = svgWrapper.value;
+  if (el) el.addEventListener("wheel", onWheel, { passive: false });
+});
+onUnmounted(() => {
+  const el = svgWrapper.value;
+  if (el) el.removeEventListener("wheel", onWheel);
+});
 </script>
 
 <template>
   <main
     ref="container"
     class="flex-1 overflow-auto flex items-start justify-center p-6 bg-panel/50"
-    @wheel="onWheel"
   >
     <div
+      ref="svgWrapper"
       :style="{ width: svgWidth + 'px', height: svgHeight + 'px' }"
     >
       <svg

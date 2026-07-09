@@ -139,20 +139,26 @@ function onResize(e) {
   const dy = sp.y - dragStart.value.y;
   const ref = dragRef.value;
   const c = ref.corner || "se";
+  const ratio = ref.h / ref.w || 1;
   let nx = ref.cx, ny = ref.cy, nw = ref.w, nh = ref.h;
-  if (c.includes("e")) {
-    nw = Math.max(30, ref.w + dx);
-  }
-  if (c.includes("w")) {
-    nx = ref.cx + dx;
-    nw = Math.max(30, ref.w - dx);
-  }
-  if (c.includes("s")) {
-    nh = Math.max(20, ref.h + dy);
-  }
-  if (c.includes("n")) {
-    ny = ref.cy + dy;
-    nh = Math.max(20, ref.h - dy);
+
+  if (e.shiftKey) {
+    // Proportional: use the larger of the two deltas
+    const adx = Math.abs(dx), ady = Math.abs(dy);
+    if (adx > ady || c === "e" || c === "w") {
+      const dir = c.includes("e") ? 1 : -1;
+      nw = Math.max(30, ref.w + dx * dir * (c.includes("e")?1:-1));
+      nh = nw * ratio;
+    } else {
+      const dir = c.includes("s") ? 1 : -1;
+      nh = Math.max(20, ref.h + dy * dir * (c.includes("s")?1:-1));
+      nw = nh / ratio;
+    }
+  } else {
+    if (c.includes("e")) nw = Math.max(30, ref.w + dx);
+    if (c.includes("w")) { nx = ref.cx + dx; nw = Math.max(30, ref.w - dx); }
+    if (c.includes("s")) nh = Math.max(20, ref.h + dy);
+    if (c.includes("n")) { ny = ref.cy + dy; nh = Math.max(20, ref.h - dy); }
   }
   store.updateElement(el.value.id, { x: Math.round(nx), y: Math.round(ny), w: Math.round(nw), h: Math.round(nh) }, true);
 }

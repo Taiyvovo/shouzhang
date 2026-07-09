@@ -16,22 +16,35 @@ onMounted(async () => {
 });
 
 function onKeyDown(e) {
-  // Delete / Backspace → remove selected element
-  if ((e.key === "Delete" || e.key === "Backspace") && store.selectedId) {
-    const tag = document.activeElement?.tagName;
-    if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
-    store.removeElement(store.selectedId);
-    e.preventDefault();
+  // Don't intercept when editing text
+  const tag = document.activeElement?.tagName;
+  if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || document.activeElement?.isContentEditable) return;
+
+  if (e.key === "Delete" || e.key === "Backspace") {
+    if (store.selectedId) {
+      store.removeElement(store.selectedId);
+      e.preventDefault();
+    }
   }
-  // Ctrl+Z → undo
+  // Undo / Redo
   if (e.ctrlKey && e.key === "z" && !e.shiftKey) {
-    e.preventDefault();
-    store.undo();
+    e.preventDefault(); store.undo();
   }
-  // Ctrl+Shift+Z or Ctrl+Y → redo
   if ((e.ctrlKey && e.key === "y") || (e.ctrlKey && e.shiftKey && e.key === "z")) {
-    e.preventDefault();
-    store.redo();
+    e.preventDefault(); store.redo();
+  }
+  // Arrow keys (only when no input focused)
+  if (e.key === "ArrowLeft") {
+    e.preventDefault(); store.undo();
+  }
+  if (e.key === "ArrowRight") {
+    e.preventDefault(); store.redo();
+  }
+  if (e.key === "ArrowUp" && store.selectedId) {
+    e.preventDefault(); store.moveUp(store.selectedId);
+  }
+  if (e.key === "ArrowDown" && store.selectedId) {
+    e.preventDefault(); store.moveDown(store.selectedId);
   }
 }
 
