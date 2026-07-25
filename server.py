@@ -2,8 +2,9 @@
 from pathlib import Path
 import base64
 import json as _json
+from urllib.parse import quote
 
-from fastapi import FastAPI, Query, Body
+from fastapi import FastAPI, Query, Body, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response, FileResponse
 from fastapi.staticfiles import StaticFiles
@@ -22,52 +23,58 @@ TEMPLATES = ROOT / "src" / "shouzhang" / "templates" / "builtin"
 font_reg = FontRegistry()
 font_reg.scan(FONTS)
 
-compiler = DocumentCompiler(assets_root=ASSETS)
+compiler = DocumentCompiler(assets_root=ASSETS, restrict_assets=True)
 raster = Rasterizer()
 
 app = FastAPI(title="手账编辑器")
-app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://127.0.0.1:5173", "http://localhost:5173"],
+    allow_methods=["GET", "POST"],
+    allow_headers=["Content-Type"],
+)
 
 # ── 数据模型 ──
 
 class FontStyle(BaseModel):
-    family: str = "sans-serif"
-    size: float = 36
-    weight: int = 400
-    color: str = "#333333"
-    line_height: float = 1.6
-    letter_spacing: float = 0
+    family: str = Field("sans-serif", max_length=200)
+    size: float = Field(36, gt=0, le=1000)
+    weight: int = Field(400, ge=100, le=900)
+    color: str = Field("#333333", max_length=100)
+    line_height: float = Field(1.6, gt=0, le=10)
+    letter_spacing: float = Field(0, ge=-100, le=1000)
 
 class Style(BaseModel):
     font: FontStyle = Field(default_factory=FontStyle)
-    opacity: float = 1.0
+    opacity: float = Field(1.0, ge=0, le=1)
 
 class CanvasModel(BaseModel):
-    width: float = 1080
-    height: float = 1527
-    background: str = "#fbfaf6"
-    pattern: str = "none"
+    width: float = Field(1080, gt=0, le=10000)
+    height: float = Field(1527, gt=0, le=10000)
+    background: str = Field("#fbfaf6", max_length=100)
+    pattern: str = Field("none", pattern="^(none|lines|grid|dots)$")
 
 class Element(BaseModel):
-    id: str
-    type: str
-    x: float = 0
-    y: float = 0
-    w: float = 200
-    h: float = 80
-    rotation: float = 0
+    id: str = Field(max_length=200)
+    type: str = Field(pattern="^(text|sticker|image)$")
+    x: float = Field(0, ge=-20000, le=20000)
+    y: float = Field(0, ge=-20000, le=20000)
+    w: float = Field(200, gt=0, le=10000)
+    h: float = Field(80, gt=0, le=10000)
+    rotation: float = Field(0, ge=-36000, le=36000)
     z_index: int = 0
-    align: str = "left"
-    valign: str = "top"
+    visible: bool = True
+    align: str = Field("left", pattern="^(left|center|right)$")
+    valign: str = Field("top", pattern="^(top|middle|bottom)$")
     style: Style = Field(default_factory=Style)
-    text: str = ""
-    src: str = ""
-    file: str = ""
-    default: str = ""
+    text: str = Field("", max_length=100000)
+    src: str = Field("", max_length=2_000_000)
+    file: str = Field("", max_length=1000)
+    default: str = Field("", max_length=100000)
 
 class RenderRequest(BaseModel):
     canvas: CanvasModel = Field(default_factory=CanvasModel)
-    elements: list[Element] = Field(default_factory=list)
+    elements: list[Element] = Field(default_factory=list, max_length=500)
 
 # ── API ──
 
@@ -84,10 +91,9 @@ def api_font_css():
                 continue
             seen.add(key)
             fstyle = "italic" if entry.italic else "normal"
-            fn = entry.path.name
             lines.append(
                 f'@font-face {{ font-family: "{entry.family}"; '
-                f'src: url("/api/font-file?family={entry.family}&weight={entry.weight}&italic={str(entry.italic).lower()}"); '
+                f'src: url("/api/font-file/{quote(entry.family, safe="")}?weight={entry.weight}&italic={str(entry.italic).lower()}"); '
                 f'font-weight: {entry.weight}; '
                 f'font-style: {fstyle}; }}'
             )
@@ -96,9 +102,13 @@ def api_font_css():
 
 
 @app.get("/api/font-file/{family:path}")
-def api_font_file_path(family: str):
+def api_font_file_path(
+    family: str,
+    weight: int = Query(400, ge=100, le=900),
+    italic: bool = Query(False),
+):
     """通过字族名直接获取字体文件，URL 编码支持含空格/中文的字体名"""
-    entry = font_reg.find(family)
+    entry = font_reg.find(family, weight=weight, italic=italic)
     if not entry:
         return Response("font not found: " + family, status_code=404)
     data = entry.path.read_bytes()
@@ -146,9 +156,9 @@ def api_stickers():
 @app.post("/api/render")
 def api_render(
     req: RenderRequest = Body(...),
-    format: str = Query("png"),
-    width: int = Query(1080),
-    scale: float = Query(1.0),
+    format: str = Query("png", pattern="^(png|svg)$"),
+    width: int = Query(1080, ge=1, le=5000),
+    scale: float = Query(1.0, ge=0.25, le=4),
 ):
     from shouzhang.models.document import Canvas, Layer, Document
     from shouzhang.models.element import TextElement, StickerElement, ImageElement
@@ -164,6 +174,8 @@ def api_render(
 
     elements = []
     for el in req.elements:
+        if not el.visible:
+            continue
         style = Style(
             font=FontStyle(
                 family=el.style.font.family,
@@ -179,6 +191,7 @@ def api_render(
             elements.append(TextElement(
                 id=el.id, x=el.x, y=el.y, w=el.w, h=el.h,
                 rotation=el.rotation, z_index=el.z_index,
+                visible=el.visible,
                 align=el.align, valign=el.valign,
                 text=el.text or el.default, style=style,
             ))
@@ -187,28 +200,36 @@ def api_render(
             elements.append(StickerElement(
                 id=el.id, x=el.x, y=el.y, w=el.w, h=el.h,
                 rotation=el.rotation, z_index=el.z_index,
+                visible=el.visible,
                 src=sticker_src, style=style,
             ))
         elif el.type == "image":
             elements.append(ImageElement(
                 id=el.id, x=el.x, y=el.y, w=el.w, h=el.h,
                 rotation=el.rotation, z_index=el.z_index,
+                visible=el.visible,
                 src=el.src, style=style,
             ))
 
     layer = Layer(id="main", name="图层1", elements=elements)
     doc = Document(id="render", name="预览", canvas=canvas, layers=[layer])
 
+    if format == "png" and width * scale > 10000:
+        raise HTTPException(status_code=422, detail="Final PNG width cannot exceed 10000 pixels")
+
     svg_compiler = SVGCompiler(font_registry=font_reg)
-    ir = compiler.compile(doc)
-    svg = svg_compiler.render(ir)
+    try:
+        ir = compiler.compile(doc)
+        svg = svg_compiler.render(ir)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
 
     if format == "svg":
         return Response(svg, media_type="image/svg+xml",
                         headers={"Content-Disposition": "attachment; filename=render.svg"})
 
     use_browser = bool(svg_compiler.used_fonts) and raster.has_browser()
-    png_bytes = raster.to_png(svg, output_width=width, scale=scale, use_browser=use_browser)
+    png_bytes = raster.to_png(svg, output_width=round(width * scale), use_browser=use_browser)
     return Response(png_bytes, media_type="image/png",
                     headers={"Content-Disposition": "attachment; filename=render.png"})
 

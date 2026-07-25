@@ -29,8 +29,13 @@ from .protocol import (
 class DocumentCompiler:
     """把 Document 编译成渲染 IR。每个元素 → 一个 DrawGroup（携带变换/透明度/阴影）。"""
 
-    def __init__(self, assets_root: Optional[Union[str, Path]] = None) -> None:
-        self.assets_root = Path(assets_root) if assets_root else None
+    def __init__(
+        self,
+        assets_root: Optional[Union[str, Path]] = None,
+        restrict_assets: bool = False,
+    ) -> None:
+        self.assets_root = Path(assets_root).resolve() if assets_root else None
+        self.restrict_assets = restrict_assets
 
     def compile(self, doc: Document) -> RenderIR:
         commands: list[DrawCommandUnion] = []
@@ -47,8 +52,23 @@ class DocumentCompiler:
         )
 
     def _resolve_src(self, src: str) -> str:
-        if self.assets_root and not Path(src).is_absolute():
-            return str(self.assets_root / src)
+        if self.assets_root:
+            source = Path(src)
+            if source.is_absolute():
+                if self.restrict_assets:
+                    raise ValueError("Asset paths must be relative to the assets directory")
+                return str(source)
+            candidate = (self.assets_root / source).resolve()
+            if self.restrict_assets:
+                try:
+                    candidate.relative_to(self.assets_root)
+                except ValueError as exc:
+                    raise ValueError("Asset path escapes the assets directory") from exc
+                if candidate.suffix.lower() not in {".svg", ".png", ".jpg", ".jpeg", ".webp", ".gif"}:
+                    raise ValueError("Unsupported asset type")
+                if not candidate.is_file():
+                    raise ValueError("Asset does not exist")
+            return str(candidate)
         return src
 
     def _element_transform(self, el: Element) -> Transform:
@@ -72,6 +92,8 @@ class DocumentCompiler:
         if canvas.pattern == "none":
             return []
         s = canvas.pattern_spacing
+        if s <= 0:
+            raise ValueError("Pattern spacing must be greater than zero")
         color = canvas.pattern_color
         out: list[DrawCommandUnion] = []
         if canvas.pattern in ("lines", "grid"):
@@ -159,7 +181,11 @@ class DocumentCompiler:
     def _compile_image(self, el: ImageElement) -> list[DrawCommandUnion]:
         if not el.src:
             return []
-        return [DrawImage(x=0, y=0, w=el.w, h=el.h, src=self._resolve_src(el.src), fit=el.fit)]
+        allowed_data_types = ("data:image/png;", "data:image/jpeg;", "data:image/webp;", "data:image/gif;")
+        if el.src.startswith("data:") and not el.src.startswith(allowed_data_types):
+            raise ValueError("Unsupported image data type")
+        src = el.src if el.src.startswith(allowed_data_types) else self._resolve_src(el.src)
+        return [DrawImage(x=0, y=0, w=el.w, h=el.h, src=src, fit=el.fit)]
 
     def _compile_sticker(self, el: StickerElement) -> list[DrawCommandUnion]:
         if not el.src:

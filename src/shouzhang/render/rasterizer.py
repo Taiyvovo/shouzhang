@@ -86,7 +86,7 @@ class Rasterizer:
         html = f"""<!DOCTYPE html>
 <html><head><meta charset="utf-8"><style>
 body {{ margin:0; background:#fff; }}
-svg {{ display:block; }}
+svg {{ display:block; width:{ow}px; height:{oh}px; }}
 </style></head><body>
 {svg}
 </body></html>"""
@@ -108,7 +108,7 @@ svg {{ display:block; }}
                     "--disable-gpu",
                     f"--screenshot={png_path}",
                     f"--window-size={ow},{oh}",
-                    f"--force-device-scale-factor={scale if scale > 0 else 1.0}",
+                    "--force-device-scale-factor=1",
                     html_path,
                 ],
                 capture_output=True,

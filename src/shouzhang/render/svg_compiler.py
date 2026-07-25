@@ -34,8 +34,8 @@ def _esc(s: str) -> str:
 
 def _family(s: str) -> str:
     if " " in s:
-        return f"'{s}'"
-    return s
+        return _esc(f"'{s}'")
+    return _esc(s)
 
 
 def _split_rgba(color: str) -> tuple[str, float]:
@@ -112,19 +112,18 @@ class SVGCompiler:
                 if entry:
                     fpath = entry.path.resolve().as_uri()
                     parts.append(
-                        f'@font-face {{ font-family: "{family}"; '
+                        f'@font-face {{ font-family: "{_esc(family)}"; '
                         f'src: url("{_esc(fpath)}"); }}'
                     )
             parts.append("</style>")
-        for (color, blur, ox, oy), fid in self._filters.items():
-            base, alpha = _split_rgba(color)
+        for (base, alpha, blur, ox, oy), fid in self._filters.items():
             parts.append(
                 f'<filter id="{fid}" x="-30%" y="-30%" width="160%" height="160%">'
                 f'<feGaussianBlur in="SourceAlpha" stdDeviation="{_f(blur)}"/>'
                 f'<feOffset dx="{_f(ox)}" dy="{_f(oy)}" result="ob"/>'
                 f'<feComponentTransfer in="ob" result="s">'
                 f'<feFuncA type="linear" slope="{_f(alpha)}"/></feComponentTransfer>'
-                f'<feFlood flood-color="{base}" result="c"/>'
+                f'<feFlood flood-color="{_esc(base)}" result="c"/>'
                 f'<feComposite in="c" in2="s" operator="in"/>'
                 f'<feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>'
                 f"</filter>"
@@ -205,7 +204,7 @@ class SVGCompiler:
         return f"<rect {' '.join(attrs)}/>"
 
     def _render_path(self, p: DrawPath) -> str:
-        attrs = [f'd="{p.d}"', f'fill="{_esc(p.fill)}"']
+        attrs = [f'd="{_esc(p.d)}"', f'fill="{_esc(p.fill)}"']
         if p.stroke != "none":
             attrs.append(f'stroke="{_esc(p.stroke)}"')
             attrs.append(f'stroke-width="{_f(p.stroke_width)}"')
@@ -258,8 +257,7 @@ class SVGCompiler:
         from ..engine.text_layout import char_width
 
         text_lines = t.text.split("\n")
-        anchor = {"left": "start", "center": "middle", "right": "end"}[t.align]
-        base_attrs = f'font-family="{_family(t.family)}" font-size="{_f(t.size)}" fill="{_esc(t.color)}" text-anchor="{anchor}"'
+        base_attrs = f'font-family="{_family(t.family)}" font-size="{_f(t.size)}" fill="{_esc(t.color)}" text-anchor="start"'
         if t.letter_spacing:
             base_attrs += f' letter-spacing="{_f(t.letter_spacing)}"'
         if t.opacity != 1.0:
@@ -283,12 +281,16 @@ class SVGCompiler:
 
         for li, (line_text, spans) in enumerate(zip(text_lines, line_spans)):
             ly = start_y + li * lh
+            line_w = sum(
+                sum(char_width(c, sp.size_override or t.size) + t.letter_spacing for c in sp.text)
+                for sp in spans
+            )
             if t.align == "left":
                 cx = t.x
             elif t.align == "center":
-                cx = t.x + t.w / 2
+                cx = t.x + (t.w - line_w) / 2
             else:
-                cx = t.x + t.w
+                cx = t.x + t.w - line_w
 
             for sp in spans:
                 sp_size = sp.size_override or t.size
@@ -302,13 +304,13 @@ class SVGCompiler:
                     f'<tspan x="{_f(cx)}" y="{_f(ly)}" {sp_attrs}>{_esc(sp.text)}</tspan>'
                 )
 
-                sp_w = sum(char_width(c, sp_size) for c in sp.text)
+                sp_w = sum(char_width(c, sp_size) + t.letter_spacing for c in sp.text)
 
                 if sp.underline:
                     uly = ly + sp_size * 0.22
                     deco_parts.append(
                         f'<line x1="{_f(cx)}" y1="{_f(uly)}" x2="{_f(cx + sp_w)}" y2="{_f(uly)}" '
-                        f'stroke="{sp_color}" stroke-width="{_f(sp_size * 0.06)}" stroke-linecap="round"/>'
+                        f'stroke="{_esc(sp_color)}" stroke-width="{_f(sp_size * 0.06)}" stroke-linecap="round"/>'
                     )
 
                 if sp.dots:
@@ -319,7 +321,7 @@ class SVGCompiler:
                         cw = char_width(ch, sp_size)
                         dot_cx = cx + acc + cw / 2
                         deco_parts.append(
-                            f'<circle cx="{_f(dot_cx)}" cy="{_f(dot_y)}" r="{_f(dot_r)}" fill="{sp_color}"/>'
+                            f'<circle cx="{_f(dot_cx)}" cy="{_f(dot_y)}" r="{_f(dot_r)}" fill="{_esc(sp_color)}"/>'
                         )
                         acc += cw
 

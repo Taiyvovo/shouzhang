@@ -6,6 +6,10 @@ function uid() {
   return `el_${++_uid}_${Date.now().toString(36)}`;
 }
 
+function clone(value) {
+  return JSON.parse(JSON.stringify(value));
+}
+
 export const useEditor = defineStore("editor", () => {
   // ── Canvas ──
   const canvas = ref({
@@ -24,8 +28,8 @@ export const useEditor = defineStore("editor", () => {
   const activeCategory = ref("emotion");
 
   // ── History (undo) ──
-  const history = ref([]);
-  const historyIndex = ref(-1);
+  const history = ref([{ canvas: clone(canvas.value), elements: [] }]);
+  const historyIndex = ref(0);
 
   // ── Fonts / Stickers / Presets (loaded from API) ──
   const fontFamilies = ref([]);
@@ -113,16 +117,20 @@ export const useEditor = defineStore("editor", () => {
 
   // ── Layer ops ──
   function moveUp(id) {
-    const el = elements.value.find((e) => e.id === id);
-    if (!el) return;
-    el.z_index += 1;
+    const ordered = sortedElements.value;
+    const index = ordered.findIndex((e) => e.id === id);
+    if (index === -1 || index === ordered.length - 1) return;
+    [ordered[index], ordered[index + 1]] = [ordered[index + 1], ordered[index]];
+    ordered.forEach((element, position) => { element.z_index = position; });
     saveHistory();
   }
 
   function moveDown(id) {
-    const el = elements.value.find((e) => e.id === id);
-    if (!el || el.z_index <= 0) return;
-    el.z_index -= 1;
+    const ordered = sortedElements.value;
+    const index = ordered.findIndex((e) => e.id === id);
+    if (index <= 0) return;
+    [ordered[index], ordered[index - 1]] = [ordered[index - 1], ordered[index]];
+    ordered.forEach((element, position) => { element.z_index = position; });
     saveHistory();
   }
 
@@ -136,7 +144,10 @@ export const useEditor = defineStore("editor", () => {
   // ── Undo ──
   function saveHistory() {
     history.value = history.value.slice(0, historyIndex.value + 1);
-    history.value.push(JSON.parse(JSON.stringify(elements.value)));
+    history.value.push({
+      canvas: clone(canvas.value),
+      elements: clone(elements.value),
+    });
     historyIndex.value = history.value.length - 1;
     if (history.value.length > 50) {
       history.value.shift();
@@ -147,20 +158,26 @@ export const useEditor = defineStore("editor", () => {
   function undo() {
     if (historyIndex.value <= 0) return;
     historyIndex.value--;
-    elements.value = JSON.parse(JSON.stringify(history.value[historyIndex.value]));
+    restoreHistory(history.value[historyIndex.value]);
   }
 
   function redo() {
     if (historyIndex.value >= history.value.length - 1) return;
     historyIndex.value++;
-    elements.value = JSON.parse(JSON.stringify(history.value[historyIndex.value]));
+    restoreHistory(history.value[historyIndex.value]);
+  }
+
+  function restoreHistory(snapshot) {
+    canvas.value = clone(snapshot.canvas);
+    elements.value = clone(snapshot.elements);
+    if (!elements.value.some((e) => e.id === selectedId.value)) selectedId.value = null;
   }
 
   // ── Serialize for export ──
   function toRenderPayload() {
     return {
       canvas: canvas.value,
-      elements: elements.value.map((e) => ({
+      elements: elements.value.filter((e) => e.visible !== false).map((e) => ({
         id: e.id,
         type: e.type,
         x: e.x,
@@ -169,6 +186,7 @@ export const useEditor = defineStore("editor", () => {
         h: e.h,
         rotation: e.rotation || 0,
         z_index: e.z_index || 0,
+        visible: e.visible !== false,
         align: e.align || "left",
         valign: e.valign || "top",
         style: {

@@ -175,7 +175,7 @@ export function parseRichText(text) {
 }
 
 // ── Span 宽度 ──
-function spanWidth(sp, baseSize, ls) {
+export function spanWidth(sp, baseSize, ls) {
   const s = sp.size || baseSize;
   let w = 0;
   for (const c of sp.text) w += charWidth(c, s);

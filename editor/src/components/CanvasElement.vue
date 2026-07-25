@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, watch } from "vue";
 import { useEditor } from "../stores/editor.js";
-import { wrapText, hasMarkup, parseRichText, wrapSpans } from "../engine/text.js";
+import { wrapText, hasMarkup, parseRichText, wrapSpans, spanWidth } from "../engine/text.js";
 
 const props = defineProps({ element: Object, scale: Number });
 const store = useEditor();
@@ -79,6 +79,19 @@ function textX() {
   return 0;
 }
 
+function richLineX(spans) {
+  const width = spans.reduce((sum, span) => sum + spanWidth(span, fsize.value, fls.value), 0);
+  if (falign.value === "center") return (boxW.value - width) / 2;
+  if (falign.value === "right") return boxW.value - width;
+  return 0;
+}
+
+function richSpanX(spans, index) {
+  return richLineX(spans) + spans
+    .slice(0, index)
+    .reduce((sum, span) => sum + spanWidth(span, fsize.value, fls.value), 0);
+}
+
 // ── Auto-resize text box height ──
 watch([totalH, lineCount], () => {
   if (!isText.value || !el.value.text) return;
@@ -146,19 +159,19 @@ function onResize(e) {
     // Proportional: use the larger of the two deltas
     const adx = Math.abs(dx), ady = Math.abs(dy);
     if (adx > ady || c === "e" || c === "w") {
-      const dir = c.includes("e") ? 1 : -1;
-      nw = Math.max(30, ref.w + dx * dir * (c.includes("e")?1:-1));
+      nw = Math.max(30, ref.w + (c.includes("e") ? dx : -dx));
       nh = nw * ratio;
     } else {
-      const dir = c.includes("s") ? 1 : -1;
-      nh = Math.max(20, ref.h + dy * dir * (c.includes("s")?1:-1));
+      nh = Math.max(20, ref.h + (c.includes("s") ? dy : -dy));
       nw = nh / ratio;
     }
+    if (c.includes("w")) nx = ref.cx + ref.w - nw;
+    if (c.includes("n")) ny = ref.cy + ref.h - nh;
   } else {
     if (c.includes("e")) nw = Math.max(30, ref.w + dx);
-    if (c.includes("w")) { nx = ref.cx + dx; nw = Math.max(30, ref.w - dx); }
+    if (c.includes("w")) { nw = Math.max(30, ref.w - dx); nx = ref.cx + ref.w - nw; }
     if (c.includes("s")) nh = Math.max(20, ref.h + dy);
-    if (c.includes("n")) { ny = ref.cy + dy; nh = Math.max(20, ref.h - dy); }
+    if (c.includes("n")) { nh = Math.max(20, ref.h - dy); ny = ref.cy + ref.h - nh; }
   }
   store.updateElement(el.value.id, { x: Math.round(nx), y: Math.round(ny), w: Math.round(nw), h: Math.round(nh) }, true);
 }
@@ -182,10 +195,11 @@ function onRotate(e) {
   const cx = el.value.x + el.value.w / 2;
   const cy = el.value.y + el.value.h / 2;
   const angle = Math.atan2(sp.y - cy, sp.x - cx) * (180 / Math.PI) + 90;
-  store.updateElement(el.value.id, { rotation: Math.round(angle) });
+  store.updateElement(el.value.id, { rotation: Math.round(angle) }, true);
 }
 function onRotateEnd() {
   isRotating.value = false;
+  store.saveHistory();
   document.removeEventListener("mousemove", onRotate);
   document.removeEventListener("mouseup", onRotateEnd);
 }
@@ -244,6 +258,7 @@ const stickerViewBox = computed(() => {
         :fill="fcolor"
         :text-anchor="anchor"
         :opacity="element.style?.opacity || 1"
+        :letter-spacing="fls || undefined"
       >{{ line }}</text>
     </template>
 
@@ -252,19 +267,21 @@ const stickerViewBox = computed(() => {
       <text
         v-for="(spans, li) in allLines"
         :key="'r'+li"
-        :text-anchor="anchor"
+        text-anchor="start"
         :opacity="element.style?.opacity || 1"
+        :letter-spacing="fls || undefined"
       >
         <tspan
           v-for="(sp, si) in spans"
           :key="si"
-          :x="textX()"
+          :x="richSpanX(spans, si)"
           :y="startY + li * fsize * fline"
           :font-family="quotedFamily(ffam)"
           :font-size="sp.size || fsize"
           :font-weight="sp.bold ? 700 : fweight"
           :font-style="sp.italic ? 'italic' : 'normal'"
           :fill="sp.color || fcolor"
+          :text-decoration="sp.underline ? 'underline' : undefined"
         >{{ sp.text }}</tspan>
       </text>
     </template>

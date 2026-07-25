@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <!-- Weeping 大哭版 -->
+  <circle cx="100" cy="100" r="80" fill="#d8e4f0"/>
+  
+  <!-- oao眼睛 -->
+  <circle cx="72" cy="90" r="10" fill="#333"/>
+  <circle cx="128" cy="90" r="10" fill="#333"/>
+  <circle cx="69" cy="86" r="3" fill="#ffffff" opacity="0.7"/>
+  <circle cx="125" cy="86" r="3" fill="#ffffff" opacity="0.7"/>
+  <circle cx="75" cy="94" r="2" fill="#ffffff" opacity="0.35"/>
+  <circle cx="131" cy="94" r="2" fill="#ffffff" opacity="0.35"/>
+  
+  <!-- 腮红 -->
+  <circle cx="65" cy="112" r="11" fill="#f5c5b9" opacity="0.6"/>
+  <circle cx="135" cy="112" r="11" fill="#f5c5b9" opacity="0.6"/>
+  
+  <!-- 哭嘴：带小开口的波浪 -->
+  <path d="M 85 128 Q 92 118 100 128 Q 108 118 115 128" fill="none" stroke="#333" stroke-width="3" stroke-linecap="round"/>
+  
+  <!-- 左眼泪滴 -->
+  <ellipse cx="68" cy="105" rx="4" ry="8" fill="#7aadd8" opacity="0.8"/>
+  <path d="M 68 97 Q 64 105 68 113 Q 72 105 68 97" fill="#7aadd8" opacity="0.8"/>
+  
+  <!-- 右眼泪滴 -->
+  <ellipse cx="132" cy="105" rx="4" ry="8" fill="#7aadd8" opacity="0.8"/>
+  <path d="M 132 97 Q 128 105 132 113 Q 136 105 132 97" fill="#7aadd8" opacity="0.8"/>
+</svg>
