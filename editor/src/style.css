@@ -12,6 +12,7 @@ body {
   margin: 0;
   overscroll-behavior: none;
   -webkit-font-smoothing: antialiased;
+  background: #f6f0e8;
 }
 
 #app {
@@ -19,4 +20,106 @@ body {
   flex-direction: column;
   height: 100vh;
   overflow: hidden;
+}
+
+button,
+input,
+select,
+textarea {
+  outline-color: #d98c72;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid rgba(217, 140, 114, 0.45);
+  outline-offset: 2px;
+}
+
+.workspace-bg {
+  background-color: #e9dfd4;
+  background-image:
+    radial-gradient(circle at 15% 20%, rgba(255, 253, 248, 0.62), transparent 28%),
+    radial-gradient(circle at 85% 80%, rgba(217, 140, 114, 0.09), transparent 30%),
+    repeating-linear-gradient(135deg, rgba(89, 67, 52, 0.018) 0 1px, transparent 1px 7px);
+}
+
+.canvas-sheet {
+  contain: layout paint;
+}
+
+.zoom-button {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.5rem;
+  color: #6f5f53;
+  font-size: 1rem;
+  transition: color 140ms ease, background-color 140ms ease;
+}
+
+.zoom-button:hover {
+  color: #352a22;
+  background: #f3e8de;
+}
+
+.tool-button:hover {
+  transform: translateY(-1px);
+}
+
+.icon-button {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.65rem;
+  color: #958476;
+  font-size: 0.875rem;
+  transition: color 160ms ease, background-color 160ms ease, transform 160ms ease;
+}
+
+.icon-button:hover {
+  color: #352a22;
+  background: #f3e8de;
+  transform: translateY(-1px);
+}
+
+.panel-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #d9cabc transparent;
+}
+
+.panel-enter-active,
+.panel-leave-active {
+  transition: opacity 140ms ease, transform 180ms ease;
+}
+
+.panel-enter-from {
+  opacity: 0;
+  transform: translateX(-8px);
+}
+
+.panel-leave-to {
+  opacity: 0;
+  transform: translateX(5px);
+}
+
+.modal-enter-active,
+.modal-leave-active {
+  transition: opacity 160ms ease;
+}
+
+.modal-enter-active > div,
+.modal-leave-active > div {
+  transition: opacity 160ms ease, transform 180ms ease;
+}
+
+.modal-enter-from,
+.modal-leave-to,
+.modal-enter-from > div,
+.modal-leave-to > div {
+  opacity: 0;
+}
+
+.modal-enter-from > div,
+.modal-leave-to > div {
+  transform: translateY(8px) scale(0.98);
 }

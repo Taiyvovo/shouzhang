@@ -8,12 +8,22 @@ import Canvas from "./components/Canvas.vue";
 const store = useEditor();
 
 onMounted(async () => {
-  await Promise.all([
+  const results = await Promise.allSettled([
     store.loadFonts(),
     store.loadStickers(),
+    store.loadImages(),
     store.loadPresets(),
   ]);
+  if (results.some((result) => result.status === "rejected")) {
+    console.warn("部分素材加载失败，基础编辑功能仍可使用", results);
+  }
 });
+
+function onBeforeUnload(e) {
+  if (!store.isDirty) return;
+  e.preventDefault();
+  e.returnValue = "";
+}
 
 function onKeyDown(e) {
   // Don't intercept when editing text
@@ -48,12 +58,18 @@ function onKeyDown(e) {
   }
 }
 
-onMounted(() => document.addEventListener("keydown", onKeyDown));
-onUnmounted(() => document.removeEventListener("keydown", onKeyDown));
+onMounted(() => {
+  document.addEventListener("keydown", onKeyDown);
+  window.addEventListener("beforeunload", onBeforeUnload);
+});
+onUnmounted(() => {
+  document.removeEventListener("keydown", onKeyDown);
+  window.removeEventListener("beforeunload", onBeforeUnload);
+});
 </script>
 
 <template>
-  <div class="flex flex-col h-screen overflow-hidden">
+  <div class="flex flex-col h-[100dvh] overflow-hidden bg-panel">
     <Toolbar />
     <div class="flex flex-1 overflow-hidden">
       <Sidebar />

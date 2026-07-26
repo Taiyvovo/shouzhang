@@ -8,15 +8,23 @@ const store = useEditor();
 
 const isSelected = computed(() => store.selectedId === props.element.id);
 const isSticker = computed(() => props.element.type === "sticker");
+const isImage = computed(() => props.element.type === "image");
+const isVisual = computed(() => isSticker.value || isImage.value);
 const isText = computed(() => props.element.type === "text");
-const showHandles = computed(() => isSelected.value && (isSticker.value || (isText.value && el.value.text)));
+const showHandles = computed(() => isSelected.value && (isVisual.value || isText.value));
 
 const isDragging = ref(false);
 const isResizing = ref(false);
 const isRotating = ref(false);
+const interactionSvg = ref(null);
 const dragStart = ref({ x: 0, y: 0 });
 const dragRef = ref({ x: 0, y: 0, w: 0, h: 0, rotation: 0 });
 const elScale = computed(() => props.scale || 1);
+const handleSize = computed(() => 12 / elScale.value);
+const handleHalf = computed(() => handleSize.value / 2);
+const handleRadius = computed(() => 7 / elScale.value);
+const rotateGap = computed(() => 30 / elScale.value);
+const controlStroke = computed(() => 1.5 / elScale.value);
 
 // ── Text helpers ──
 const el = computed(() => props.element);
@@ -103,7 +111,7 @@ watch([totalH, lineCount], () => {
 
 // ── SVG position helpers ──
 function getSVGPos(e) {
-  const svgEl = document.querySelector(".shadow-xl");
+  const svgEl = e.target?.ownerSVGElement || e.currentTarget?.ownerSVGElement || interactionSvg.value;
   if (!svgEl) return { x: 0, y: 0 };
   const r = svgEl.getBoundingClientRect();
   return { x: (e.clientX - r.left) / elScale.value, y: (e.clientY - r.top) / elScale.value };
@@ -113,6 +121,7 @@ function getSVGPos(e) {
 function onMoveStart(e) {
   if (isResizing.value || isRotating.value) return;
   store.selectElement(props.element.id);
+  interactionSvg.value = e.currentTarget?.ownerSVGElement || e.target?.ownerSVGElement;
   isDragging.value = true;
   const sp = getSVGPos(e);
   dragStart.value = { x: sp.x - props.element.x, y: sp.y - props.element.y };
@@ -128,8 +137,10 @@ function onMove(e) {
     y: Math.round(sp.y - dragStart.value.y),
   }, true);
 }
-function onMoveEnd() {
+function onMoveEnd(e) {
+  if (!isDragging.value) return;
   isDragging.value = false;
+  interactionSvg.value = null;
   store.saveHistory();
   document.removeEventListener("mousemove", onMove);
   document.removeEventListener("mouseup", onMoveEnd);
@@ -138,6 +149,7 @@ function onMoveEnd() {
 // ── Resize ──
 function onResizeStart(e, corner) {
   isResizing.value = true;
+  interactionSvg.value = e.currentTarget?.ownerSVGElement || e.target?.ownerSVGElement;
   const sp = getSVGPos(e);
   dragRef.value = { x: sp.x, y: sp.y, w: el.value.w, h: el.value.h, cx: el.value.x, cy: el.value.y, corner };
   dragStart.value = { x: sp.x, y: sp.y };
@@ -176,7 +188,9 @@ function onResize(e) {
   store.updateElement(el.value.id, { x: Math.round(nx), y: Math.round(ny), w: Math.round(nw), h: Math.round(nh) }, true);
 }
 function onResizeEnd() {
+  if (!isResizing.value) return;
   isResizing.value = false;
+  interactionSvg.value = null;
   store.saveHistory();
   document.removeEventListener("mousemove", onResize);
   document.removeEventListener("mouseup", onResizeEnd);
@@ -185,6 +199,7 @@ function onResizeEnd() {
 // ── Rotate ──
 function onRotateStart(e) {
   isRotating.value = true;
+  interactionSvg.value = e.currentTarget?.ownerSVGElement || e.target?.ownerSVGElement;
   e.stopPropagation(); e.preventDefault();
   document.addEventListener("mousemove", onRotate);
   document.addEventListener("mouseup", onRotateEnd);
@@ -198,7 +213,9 @@ function onRotate(e) {
   store.updateElement(el.value.id, { rotation: Math.round(angle) }, true);
 }
 function onRotateEnd() {
+  if (!isRotating.value) return;
   isRotating.value = false;
+  interactionSvg.value = null;
   store.saveHistory();
   document.removeEventListener("mousemove", onRotate);
   document.removeEventListener("mouseup", onRotateEnd);
@@ -296,6 +313,16 @@ const stickerViewBox = computed(() => {
       :opacity="element.style?.opacity || 1"
     />
 
+    <!-- Image -->
+    <image
+      v-if="element.type === 'image' && element.src"
+      :href="element.src"
+      :width="element.w"
+      :height="element.h"
+      preserveAspectRatio="xMidYMid meet"
+      :opacity="element.style?.opacity || 1"
+    />
+
     <!-- Selection border -->
     <rect
       v-if="isSelected"
@@ -303,29 +330,26 @@ const stickerViewBox = computed(() => {
       :width="element.w || 200"
       :height="element.h || 80"
       fill="none"
-      stroke="#e8a838"
-      stroke-width="1.5"
+      stroke="#d98c72"
+      :stroke-width="controlStroke"
       rx="1"
       pointer-events="none"
     />
 
-    <!-- Resize handles (text & sticker) -->
+    <!-- Resize and rotation controls -->
     <template v-if="showHandles">
-      <rect x="-7" y="-7" width="14" height="14" fill="white" stroke="#e8a838" stroke-width="2" rx="2"
-            class="cursor-nwse-resize" @mousedown.stop="onResizeStart($event, 'nw')" />
-      <rect :x="element.w - 7" y="-7" width="14" height="14" fill="white" stroke="#e8a838" stroke-width="2" rx="2"
-            class="cursor-nesw-resize" @mousedown.stop="onResizeStart($event, 'ne')" />
-      <rect x="-7" :y="element.h - 7" width="14" height="14" fill="white" stroke="#e8a838" stroke-width="2" rx="2"
-            class="cursor-nesw-resize" @mousedown.stop="onResizeStart($event, 'sw')" />
-      <rect :x="element.w - 7" :y="element.h - 7" width="14" height="14" fill="white" stroke="#e8a838" stroke-width="2" rx="2"
-            class="cursor-nwse-resize" @mousedown.stop="onResizeStart($event, 'se')" />
+      <rect :x="-handleHalf" :y="-handleHalf" :width="handleSize" :height="handleSize" fill="#fffdf8" stroke="#d98c72" :stroke-width="controlStroke" :rx="2 / elScale"
+            class="cursor-nwse-resize" @mousedown.stop.prevent="onResizeStart($event, 'nw')" />
+      <rect :x="element.w - handleHalf" :y="-handleHalf" :width="handleSize" :height="handleSize" fill="#fffdf8" stroke="#d98c72" :stroke-width="controlStroke" :rx="2 / elScale"
+            class="cursor-nesw-resize" @mousedown.stop.prevent="onResizeStart($event, 'ne')" />
+      <rect :x="-handleHalf" :y="element.h - handleHalf" :width="handleSize" :height="handleSize" fill="#fffdf8" stroke="#d98c72" :stroke-width="controlStroke" :rx="2 / elScale"
+            class="cursor-nesw-resize" @mousedown.stop.prevent="onResizeStart($event, 'sw')" />
+      <rect :x="element.w - handleHalf" :y="element.h - handleHalf" :width="handleSize" :height="handleSize" fill="#fffdf8" stroke="#d98c72" :stroke-width="controlStroke" :rx="2 / elScale"
+            class="cursor-nwse-resize" @mousedown.stop.prevent="onResizeStart($event, 'se')" />
 
-      <!-- Rotation handle (sticker only) -->
-      <template v-if="isSticker">
-        <line :x1="element.w / 2" :y1="0" :x2="element.w / 2" :y2="-30" stroke="#e8a838" stroke-width="1" pointer-events="none" />
-        <circle :cx="element.w / 2" :cy="-34" r="7" fill="white" stroke="#e8a838" stroke-width="2"
-                class="cursor-grab" @mousedown.stop="onRotateStart" />
-      </template>
+      <line :x1="element.w / 2" :y1="0" :x2="element.w / 2" :y2="-rotateGap" stroke="#d98c72" :stroke-width="controlStroke" pointer-events="none" />
+      <circle :cx="element.w / 2" :cy="-rotateGap" :r="handleRadius" fill="#fffdf8" stroke="#d98c72" :stroke-width="controlStroke"
+              class="cursor-grab" @mousedown.stop.prevent="onRotateStart" />
     </template>
   </g>
 </template>

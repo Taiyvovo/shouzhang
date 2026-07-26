@@ -41,7 +41,7 @@ const store = useEditor();
     </div>
 
     <p v-if="store.elements.length === 0" class="text-xs text-muted py-6 text-center">
-      暂无元素，用文字/贴纸工具添加
+      暂无元素，用文字、贴纸或图片工具添加
     </p>
   </div>
 </template>

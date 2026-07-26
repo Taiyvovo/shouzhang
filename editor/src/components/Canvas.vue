@@ -10,9 +10,18 @@ const defsRef = ref(null);
 const svgWrapper = ref(null);
 const canvasScale = ref(0.5);
 const clickOrigin = ref({ x: 0, y: 0 });
+const viewportSize = ref({ width: 0, height: 0 });
+const isPanning = ref(false);
+const spacePressed = ref(false);
+const panStart = ref({ x: 0, y: 0, left: 0, top: 0 });
+let resizeObserver;
 
 const svgWidth = computed(() => store.canvas.width * canvasScale.value);
 const svgHeight = computed(() => store.canvas.height * canvasScale.value);
+const stageStyle = computed(() => ({
+  width: `${Math.max(viewportSize.value.width, svgWidth.value + 96)}px`,
+  height: `${Math.max(viewportSize.value.height, svgHeight.value + 96)}px`,
+}));
 
 // ── Dynamic @font-face for used custom fonts ──
 function injectFontCSS() {
@@ -135,82 +144,196 @@ function onCanvasClick(e) {
   }
 }
 
+function setZoom(nextScale, clientX, clientY) {
+  const viewport = container.value;
+  const svg = svgWrapper.value;
+  if (!viewport || !svg) return;
+  const next = Math.max(0.1, Math.min(4, Math.round(nextScale * 100) / 100));
+  if (next === canvasScale.value) return;
+
+  const viewportRect = viewport.getBoundingClientRect();
+  const svgRect = svg.getBoundingClientRect();
+  const anchorX = clientX ?? viewportRect.left + viewportRect.width / 2;
+  const anchorY = clientY ?? viewportRect.top + viewportRect.height / 2;
+  const canvasX = (anchorX - svgRect.left) / canvasScale.value;
+  const canvasY = (anchorY - svgRect.top) / canvasScale.value;
+
+  canvasScale.value = next;
+  nextTick(() => {
+    const nextRect = svg.getBoundingClientRect();
+    viewport.scrollLeft += nextRect.left + canvasX * next - anchorX;
+    viewport.scrollTop += nextRect.top + canvasY * next - anchorY;
+  });
+}
+
+function zoomBy(amount) {
+  setZoom(canvasScale.value + amount);
+}
+
+function fitCanvas() {
+  const viewport = container.value;
+  if (!viewport) return;
+  const availableWidth = Math.max(100, viewport.clientWidth - 96);
+  const availableHeight = Math.max(100, viewport.clientHeight - 96);
+  const next = Math.min(
+    availableWidth / store.canvas.width,
+    availableHeight / store.canvas.height,
+    1,
+  );
+  canvasScale.value = Math.max(0.1, Math.floor(next * 100) / 100);
+  nextTick(() => {
+    viewport.scrollLeft = Math.max(0, (viewport.scrollWidth - viewport.clientWidth) / 2);
+    viewport.scrollTop = Math.max(0, (viewport.scrollHeight - viewport.clientHeight) / 2);
+  });
+}
+
 function onWheel(e) {
-  if (e.ctrlKey) return;
+  const svg = svgWrapper.value;
+  if (!svg || !svg.contains(e.target)) return;
   e.preventDefault();
   e.stopPropagation();
-  const delta = e.deltaY > 0 ? -0.05 : 0.05;
-  canvasScale.value = Math.max(0.2, Math.min(2.0, canvasScale.value + delta));
+  const direction = e.deltaY > 0 ? -1 : 1;
+  const step = Math.max(0.05, canvasScale.value * 0.12);
+  setZoom(canvasScale.value + direction * step, e.clientX, e.clientY);
+}
+
+function onKeyDown(e) {
+  if (e.code !== "Space" || ["INPUT", "TEXTAREA", "SELECT"].includes(document.activeElement?.tagName)) return;
+  spacePressed.value = true;
+  e.preventDefault();
+}
+
+function onKeyUp(e) {
+  if (e.code === "Space") spacePressed.value = false;
+}
+
+function onPanStart(e) {
+  if (e.button !== 1 && !(e.button === 0 && spacePressed.value)) return;
+  const viewport = container.value;
+  if (!viewport) return;
+  e.preventDefault();
+  e.stopPropagation();
+  isPanning.value = true;
+  panStart.value = {
+    x: e.clientX,
+    y: e.clientY,
+    left: viewport.scrollLeft,
+    top: viewport.scrollTop,
+  };
+  document.addEventListener("mousemove", onPanMove);
+  document.addEventListener("mouseup", onPanEnd);
+}
+
+function onPanMove(e) {
+  if (!isPanning.value || !container.value) return;
+  container.value.scrollLeft = panStart.value.left - (e.clientX - panStart.value.x);
+  container.value.scrollTop = panStart.value.top - (e.clientY - panStart.value.y);
+}
+
+function onPanEnd() {
+  isPanning.value = false;
+  document.removeEventListener("mousemove", onPanMove);
+  document.removeEventListener("mouseup", onPanEnd);
 }
 
 // Use native listener to ensure passive:false (so preventDefault works)
 onMounted(() => {
-  const el = svgWrapper.value;
-  if (el) el.addEventListener("wheel", onWheel, { passive: false });
+  const el = container.value;
+  if (el) {
+    el.addEventListener("wheel", onWheel, { passive: false });
+    resizeObserver = new ResizeObserver(([entry]) => {
+      viewportSize.value = {
+        width: entry.contentRect.width,
+        height: entry.contentRect.height,
+      };
+    });
+    resizeObserver.observe(el);
+  }
+  window.addEventListener("keydown", onKeyDown);
+  window.addEventListener("keyup", onKeyUp);
+  nextTick(fitCanvas);
 });
 onUnmounted(() => {
-  const el = svgWrapper.value;
+  const el = container.value;
   if (el) el.removeEventListener("wheel", onWheel);
+  resizeObserver?.disconnect();
+  window.removeEventListener("keydown", onKeyDown);
+  window.removeEventListener("keyup", onKeyUp);
+  document.removeEventListener("mousemove", onPanMove);
+  document.removeEventListener("mouseup", onPanEnd);
 });
 </script>
 
 <template>
-  <main
-    ref="container"
-    class="flex-1 overflow-auto flex items-start justify-center p-6 bg-panel/50"
-  >
-    <div
-      ref="svgWrapper"
-      :style="{ width: svgWidth + 'px', height: svgHeight + 'px' }"
+  <section class="relative flex-1 min-w-0 overflow-hidden">
+    <main
+      ref="container"
+      class="workspace-bg w-full h-full overflow-auto"
+      :class="isPanning ? 'cursor-grabbing select-none' : spacePressed ? 'cursor-grab' : ''"
+      @mousedown.capture="onPanStart"
     >
-      <svg
-        :width="svgWidth"
-        :height="svgHeight"
-        :viewBox="`0 0 ${store.canvas.width} ${store.canvas.height}`"
-        xmlns="http://www.w3.org/2000/svg"
-        class="shadow-xl ring-1 ring-border/50"
-        @click="onCanvasClick"
-        @mousedown="onSvgMouseDown"
-      >
-        <defs ref="defsRef" />
+      <div :style="stageStyle" class="flex items-center justify-center">
+        <div
+          ref="svgWrapper"
+          :style="{ width: svgWidth + 'px', height: svgHeight + 'px' }"
+          class="canvas-sheet shrink-0"
+        >
+          <svg
+            :width="svgWidth"
+            :height="svgHeight"
+            :viewBox="`0 0 ${store.canvas.width} ${store.canvas.height}`"
+            xmlns="http://www.w3.org/2000/svg"
+            class="shadow-2xl ring-1 ring-white/80"
+            @click="onCanvasClick"
+            @mousedown="onSvgMouseDown"
+          >
+            <defs ref="defsRef" />
 
-        <rect
-          class="background"
-          :width="store.canvas.width"
-          :height="store.canvas.height"
-          :fill="store.canvas.background"
-        />
+            <rect
+              class="background"
+              :width="store.canvas.width"
+              :height="store.canvas.height"
+              :fill="store.canvas.background"
+            />
 
-        <path
-          v-if="patternLines"
-          :d="patternLines"
-          fill="none"
-          stroke="rgba(160,150,130,0.2)"
-          stroke-width="1"
-        />
+            <path
+              v-if="patternLines"
+              :d="patternLines"
+              fill="none"
+              stroke="rgba(160,150,130,0.2)"
+              stroke-width="1"
+            />
 
-        <path
-          v-if="patternDots"
-          :d="patternDots"
-          fill="none"
-          stroke="rgba(160,150,130,0.2)"
-          stroke-width="1.5"
-          stroke-linecap="round"
-        />
+            <path
+              v-if="patternDots"
+              :d="patternDots"
+              fill="none"
+              stroke="rgba(160,150,130,0.2)"
+              stroke-width="1.5"
+              stroke-linecap="round"
+            />
 
-        <CanvasElement
-          v-for="el in store.sortedElements"
-          :key="el.id"
-          :element="el"
-          :scale="canvasScale"
-        />
-      </svg>
-    </div>
+            <CanvasElement
+              v-for="el in store.sortedElements"
+              :key="el.id"
+              :element="el"
+              :scale="canvasScale"
+            />
+          </svg>
+        </div>
+      </div>
+    </main>
 
     <div
-      class="fixed bottom-3 right-3 bg-white/80 text-xs text-muted px-2 py-1 rounded shadow"
+      class="absolute bottom-4 right-4 flex items-center gap-1 bg-paper/95 backdrop-blur text-[11px] text-muted p-1 rounded-xl border border-border/70 shadow-md"
     >
-      {{ Math.round(canvasScale * 100) }}%
+      <button class="zoom-button" title="缩小" aria-label="缩小" @click="zoomBy(-0.1)">−</button>
+      <button class="min-w-14 px-2 h-8 rounded-lg hover:bg-hover transition-colors" title="适应窗口" @click="fitCanvas">
+        {{ Math.round(canvasScale * 100) }}%
+      </button>
+      <button class="zoom-button" title="放大" aria-label="放大" @click="zoomBy(0.1)">＋</button>
+      <span class="w-px h-4 bg-border mx-0.5" />
+      <button class="px-2 h-8 rounded-lg hover:bg-hover transition-colors" title="适应窗口" @click="fitCanvas">适应</button>
     </div>
-  </main>
+  </section>
 </template>

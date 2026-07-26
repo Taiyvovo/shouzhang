@@ -68,7 +68,7 @@ class Element(BaseModel):
     valign: str = Field("top", pattern="^(top|middle|bottom)$")
     style: Style = Field(default_factory=Style)
     text: str = Field("", max_length=100000)
-    src: str = Field("", max_length=2_000_000)
+    src: str = Field("", max_length=15_000_000)
     file: str = Field("", max_length=1000)
     default: str = Field("", max_length=100000)
 
@@ -152,6 +152,43 @@ def api_stickers():
     if root_items:
         cats["basic"] = root_items
     return {"categories": cats}
+
+
+@app.get("/api/images")
+def api_images():
+    images_dir = ASSETS / "images"
+    categories = {}
+    if not images_dir.is_dir():
+        return {"categories": categories}
+    allowed = {".png", ".jpg", ".jpeg", ".webp"}
+    directories = [images_dir, *(p for p in sorted(images_dir.iterdir()) if p.is_dir())]
+    for directory in directories:
+        items = []
+        for image_file in sorted(directory.iterdir()):
+            if not image_file.is_file() or image_file.suffix.lower() not in allowed:
+                continue
+            relative = image_file.relative_to(images_dir).as_posix()
+            items.append({
+                "name": image_file.stem,
+                "src": f"images/{relative}",
+                "thumb": f"/api/image-file/{quote(relative)}",
+            })
+        if items:
+            categories["basic" if directory == images_dir else directory.name] = items
+    return {"categories": categories}
+
+
+@app.get("/api/image-file/{path:path}")
+def api_image_file(path: str):
+    images_dir = (ASSETS / "images").resolve()
+    candidate = (images_dir / path).resolve()
+    try:
+        candidate.relative_to(images_dir)
+    except ValueError as exc:
+        raise HTTPException(status_code=404, detail="Image not found") from exc
+    if candidate.suffix.lower() not in {".png", ".jpg", ".jpeg", ".webp"} or not candidate.is_file():
+        raise HTTPException(status_code=404, detail="Image not found")
+    return FileResponse(candidate)
 
 @app.post("/api/render")
 def api_render(

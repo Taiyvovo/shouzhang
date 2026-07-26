@@ -26,6 +26,8 @@ export const useEditor = defineStore("editor", () => {
   const activeTool = ref("text"); // "background" | "text" | "sticker" | "layer"
   const selectedId = ref(null);
   const activeCategory = ref("emotion");
+  const activeImageCategory = ref("basic");
+  const projectName = ref("未命名手账");
 
   // ── History (undo) ──
   const history = ref([{ canvas: clone(canvas.value), elements: [] }]);
@@ -34,7 +36,13 @@ export const useEditor = defineStore("editor", () => {
   // ── Fonts / Stickers / Presets (loaded from API) ──
   const fontFamilies = ref([]);
   const stickerData = ref({});
+  const imageData = ref({});
   const presets = ref(null);
+  const savedFingerprint = ref(JSON.stringify({
+    name: projectName.value,
+    canvas: canvas.value,
+    elements: [],
+  }));
 
   // ── Computed ──
   const sortedElements = computed(() =>
@@ -46,6 +54,16 @@ export const useEditor = defineStore("editor", () => {
   );
 
   const stickerCategories = computed(() => Object.keys(stickerData.value));
+  const imageCategories = computed(() => Object.keys(imageData.value));
+  const isDirty = computed(() => projectFingerprint() !== savedFingerprint.value);
+
+  function projectFingerprint() {
+    return JSON.stringify({
+      name: projectName.value,
+      canvas: canvas.value,
+      elements: elements.value,
+    });
+  }
 
   // ── Canvas ──
   function setCanvas(c) {
@@ -173,6 +191,42 @@ export const useEditor = defineStore("editor", () => {
     if (!elements.value.some((e) => e.id === selectedId.value)) selectedId.value = null;
   }
 
+  function projectData() {
+    return {
+      format: "shouzhang-project",
+      version: 1,
+      name: projectName.value,
+      canvas: clone(canvas.value),
+      elements: clone(elements.value),
+    };
+  }
+
+  function markSaved() {
+    savedFingerprint.value = projectFingerprint();
+  }
+
+  function loadProject(data, fallbackName = "未命名手账") {
+    if (!data || data.format !== "shouzhang-project" || data.version !== 1) {
+      throw new Error("不是有效的手账工程文件");
+    }
+    if (!data.canvas || !Array.isArray(data.elements)) {
+      throw new Error("工程文件缺少画布或元素数据");
+    }
+    const width = Number(data.canvas.width);
+    const height = Number(data.canvas.height);
+    if (!(width > 0 && width <= 10000 && height > 0 && height <= 10000)) {
+      throw new Error("工程文件的画布尺寸无效");
+    }
+    if (data.elements.length > 500) throw new Error("工程文件中的元素过多");
+    canvas.value = clone(data.canvas);
+    elements.value = clone(data.elements);
+    projectName.value = String(data.name || fallbackName).slice(0, 100);
+    selectedId.value = null;
+    history.value = [{ canvas: clone(canvas.value), elements: clone(elements.value) }];
+    historyIndex.value = 0;
+    markSaved();
+  }
+
   // ── Serialize for export ──
   function toRenderPayload() {
     return {
@@ -221,6 +275,16 @@ export const useEditor = defineStore("editor", () => {
     stickerData.value = d.categories;
   }
 
+  async function loadImages() {
+    const r = await fetch("/api/images");
+    if (!r.ok) throw new Error("图片素材加载失败");
+    const d = await r.json();
+    imageData.value = d.categories;
+    if (!imageData.value[activeImageCategory.value]) {
+      activeImageCategory.value = Object.keys(imageData.value)[0] || "basic";
+    }
+  }
+
   async function loadPresets() {
     const r = await fetch("/api/presets");
     presets.value = await r.json();
@@ -231,11 +295,16 @@ export const useEditor = defineStore("editor", () => {
     elements,
     activeTool,
     activeCategory,
+    activeImageCategory,
+    projectName,
     selectedId,
     selected,
     fontFamilies,
     stickerData,
     stickerCategories,
+    imageData,
+    imageCategories,
+    isDirty,
     presets,
     sortedElements,
     setCanvas,
@@ -252,9 +321,13 @@ export const useEditor = defineStore("editor", () => {
     saveHistory,
     undo,
     redo,
+    projectData,
+    markSaved,
+    loadProject,
     toRenderPayload,
     loadFonts,
     loadStickers,
+    loadImages,
     loadPresets,
   };
 });

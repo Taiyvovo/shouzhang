@@ -4,13 +4,13 @@ export default {
   theme: {
     extend: {
       colors: {
-        paper: "#fafaf7",
-        panel: "#f5f3ef",
-        border: "#e0dbd4",
-        ink: "#2c2416",
-        muted: "#8c8273",
-        accent: "#e8a838",
-        hover: "#f0ede6",
+        paper: "#fffdf8",
+        panel: "#f6f0e8",
+        border: "#e5d9cb",
+        ink: "#352a22",
+        muted: "#958476",
+        accent: "#d98c72",
+        hover: "#f3e8de",
       },
     },
   },

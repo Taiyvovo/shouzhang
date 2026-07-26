@@ -41,11 +41,14 @@ async function doExport() {
 
 <template>
   <div
-    class="fixed inset-0 bg-black/20 flex items-center justify-center z-50"
+    class="fixed inset-0 bg-ink/20 backdrop-blur-sm flex items-center justify-center z-50"
     @click.self="emit('close')"
   >
-    <div class="bg-white rounded-xl shadow-2xl p-6 w-80 space-y-4">
-      <h3 class="text-lg font-semibold text-ink">导出</h3>
+    <div class="bg-paper rounded-2xl border border-white shadow-2xl p-6 w-80 space-y-4">
+      <div>
+        <h3 class="text-lg font-semibold text-ink">导出作品</h3>
+        <p class="text-xs text-muted mt-1">选择适合分享或继续编辑的格式</p>
+      </div>
 
       <!-- Format -->
       <div>
