@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <!-- 花痴 -->
+  <circle cx="100" cy="100" r="80" fill="#f5d0c4"/>
+  <path d="M75 98 C58 86 58 69 69 69 C74 69 77 73 78 77 C79 73 82 69 87 69 C98 69 98 86 81 98 Z" fill="#e96f7d"/>
+  <path d="M125 98 C108 86 108 69 119 69 C124 69 127 73 128 77 C129 73 132 69 137 69 C148 69 148 86 131 98 Z" fill="#e96f7d"/>
+  <circle cx="65" cy="112" r="12" fill="#f5aeb0" opacity="0.8"/>
+  <circle cx="135" cy="112" r="12" fill="#f5aeb0" opacity="0.8"/>
+  <path d="M84 116 Q100 137 116 116 Q100 123 84 116 Z" fill="#333"/>
+  <path d="M96 127 Q102 123 108 127 Q103 136 96 127 Z" fill="#e96f7d"/>
+  <path d="M116 124 Q124 138 124 145 A5 5 0 0 1 114 145 Q114 138 116 124 Z" fill="#7aadd8" opacity="0.85"/>
+</svg>

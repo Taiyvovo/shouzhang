@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Stem -->
+  <path d="M50 48 Q47 68 50 85" fill="none" stroke="#638b58" stroke-width="2.5" stroke-linecap="round"/>
+  
+  <!-- Leaves -->
+  <path d="M49 68 Q31 63 25 50 Q41 49 49 64 Z" fill="#84ad74" stroke="#527846" stroke-width="1.6" stroke-linejoin="round"/>
+  <path d="M48 66 Q37 58 31 53" fill="none" stroke="#527846" stroke-width="1.2" stroke-linecap="round"/>
+  
+  <path d="M50 74 Q68 70 75 57 Q58 55 50 70 Z" fill="#78a368" stroke="#4a6e3e" stroke-width="1.6" stroke-linejoin="round"/>
+  <path d="M50 72 Q61 65 68 60" fill="none" stroke="#4a6e3e" stroke-width="1.2" stroke-linecap="round"/>
+  
+  <!-- Leaf Highlight -->
+  <ellipse cx="33" cy="56" rx="4" ry="2" fill="#ffffff" opacity="0.28" transform="rotate(-25 33 56)"/>
+
+  <!-- Petals Group -->
+  <g fill="#ff9ebb" stroke="#db6b8f" stroke-width="1.7" stroke-linejoin="round">
+    <path d="M50 40 C41 40 37 23 50 12 C63 23 59 40 50 40 Z"/>
+    <path d="M50 40 C41 40 37 23 50 12 C63 23 59 40 50 40 Z" transform="rotate(60 50 40)"/>
+    <path d="M50 40 C41 40 37 23 50 12 C63 23 59 40 50 40 Z" transform="rotate(120 50 40)"/>
+    <path d="M50 40 C41 40 37 23 50 12 C63 23 59 40 50 40 Z" transform="rotate(180 50 40)"/>
+    <path d="M50 40 C41 40 37 23 50 12 C63 23 59 40 50 40 Z" transform="rotate(240 50 40)"/>
+    <path d="M50 40 C41 40 37 23 50 12 C63 23 59 40 50 40 Z" transform="rotate(300 50 40)"/>
+  </g>
+
+  <!-- Inner Petal Highlights -->
+  <g fill="#ffc2d4" opacity="0.6">
+    <circle cx="50" cy="24" r="3.5"/>
+    <circle cx="64" cy="32" r="3.5"/>
+    <circle cx="64" cy="48" r="3.5"/>
+    <circle cx="50" cy="56" r="3.5"/>
+    <circle cx="36" cy="48" r="3.5"/>
+    <circle cx="36" cy="32" r="3.5"/>
+  </g>
+
+  <!-- Flower Center -->
+  <circle cx="50" cy="40" r="11" fill="#f8c844" stroke="#c99726" stroke-width="1.7"/>
+  <circle cx="50" cy="40" r="8" fill="#ffe066" opacity="0.5"/>
+  
+  <!-- Center & Petal Highlights -->
+  <ellipse cx="46.5" cy="36.5" rx="3" ry="2" fill="#ffffff" opacity="0.45" transform="rotate(-20 46.5 36.5)"/>
+  <path d="M45 17 Q50 14 55 17" fill="none" stroke="#ffffff" stroke-width="1.6" stroke-linecap="round" opacity="0.4"/>
+</svg>

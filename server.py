@@ -128,13 +128,14 @@ def api_stickers():
         if not cat_dir.is_dir():
             continue
         items = []
-        for svg_file in sorted(cat_dir.glob("*.svg")):
+        for svg_file in sorted(cat_dir.rglob("*.svg")):
             name = svg_file.stem
             svg_bytes = svg_file.read_bytes()
             b64 = base64.b64encode(svg_bytes).decode()
+            relative = svg_file.relative_to(stickers_dir).as_posix()
             items.append({
                 "name": name,
-                "src": f"stickers/{cat_dir.name}/{svg_file.name}",
+                "src": f"stickers/{relative}",
                 "thumb": f"data:image/svg+xml;base64,{b64}",
             })
         cats[cat_dir.name] = items

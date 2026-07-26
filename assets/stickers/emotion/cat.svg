@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <!-- 小猫 -->
+  <path d="M37 70 L31 30 L70 49 Z" fill="#f4dfc8"/>
+  <path d="M163 70 L169 30 L130 49 Z" fill="#f4dfc8"/>
+  <path d="M40 58 L37 39 L57 49 Z" fill="#f5c5b9"/>
+  <path d="M160 58 L163 39 L143 49 Z" fill="#f5c5b9"/>
+  <circle cx="100" cy="105" r="75" fill="#f4dfc8"/>
+  <circle cx="72" cy="94" r="6" fill="#333"/>
+  <circle cx="128" cy="94" r="6" fill="#333"/>
+  <circle cx="65" cy="114" r="11" fill="#f5c5b9" opacity="0.8"/>
+  <circle cx="135" cy="114" r="11" fill="#f5c5b9" opacity="0.8"/>
+  <path d="M95 108 L100 112 L105 108 Z" fill="#e58f91"/>
+  <path d="M86 116 Q93 124 100 116 Q107 124 114 116" fill="none" stroke="#333" stroke-width="3" stroke-linecap="round"/>
+  <path d="M43 106 L62 109 M42 117 L62 115 M157 106 L138 109 M158 117 L138 115" stroke="#333" stroke-width="2" stroke-linecap="round"/>
+</svg>

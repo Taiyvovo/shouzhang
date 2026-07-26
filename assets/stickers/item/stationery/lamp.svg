@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Soft Light Glow Cone -->
+  <polygon points="26,46 74,46 86,88 14,88" fill="#fff3c4" opacity="0.45"/>
+
+  <!-- Base -->
+  <ellipse cx="50" cy="86" rx="22" ry="6" fill="#c49576" stroke="#9e6e50" stroke-width="1.8"/>
+
+  <!-- Stand Pole -->
+  <path d="M50 50 L50 86" fill="none" stroke="#9e6e50" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- Lampshade Body -->
+  <path d="M34 20 L66 20 L76 46 L24 46 Z" fill="#f4b266" stroke="#d48a3b" stroke-width="1.8" stroke-linejoin="round"/>
+
+  <!-- Lampshade Top Cap -->
+  <ellipse cx="50" cy="20" rx="16" ry="4" fill="#f8c88c" stroke="#d48a3b" stroke-width="1.5"/>
+
+  <!-- Lampshade Bottom Rim -->
+  <ellipse cx="50" cy="46" rx="26" ry="5.5" fill="#f9c87c" stroke="#d48a3b" stroke-width="1.5"/>
+
+  <!-- Highlight on Lampshade -->
+  <path d="M34 24 L30 42" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" opacity="0.45"/>
+</svg>
